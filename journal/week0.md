@@ -142,3 +142,61 @@ Then I verified the same on the AWS Management Console in *CloudWatch* service
 
 ### Ashish's Seurity Video
 [week 0 Security video](https://www.youtube.com/watch?v=4EMWBYVggQI&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=15) 
+
+##### AWS Organzations
+- An account management service that lets you consolidate multiple AWS accounts into an organization that you create and centrally manage. 
+- With Organizations, you can create member accounts and invite existing accounts to join your organization
+- Feature is free to enable
+- if consolidated billing enabled, the owner account is responsible for paying the bill for all associated accounts
+
+##### CloudTrail
+- Most APIs in AWS are logged in CloudTrail
+- Can audit almost anything in your AWS a/c. 
+- Can be used to :
+ - Audit log for API calls
+ - monitor data is in the correct place (monitor data residency)
+ - understand regional v/s Global services
+ - audit incident records/forensics
+- CloudTrail stores the logs in Amazon S3 storage service bucket
+- Allows ability to encrypt the data in that log bucket. Mechanisms: 	Aws KMS key mgmt. system
+
+- What type of Events does CloudTrail log?
+ - Management events (free) – management operations performed by AWS services
+ - Data events (chargeable) – logs resource operations performed on or within  Aws resources	
+ - Insight events (chargeable) – identifies API calls ( unusual activity, errors or user behaviour in an Aws account)
+
+###### Management Events that can be monitored by CloudTrail:
+ 1. Read API
+ 2. Write API
+3. Exclude AWS KMS events
+4. Exclude Amazon RDS Data API events
+
+###### Data Events 
+ select the service name
+
+###### Insights
+ 1. API call rate
+ 2. API error rate
+ 
+ ##### IAM
+ Types of IAM users
+ 
+ 1. Human users – Local AWS accounts for IAM 
+ 2. System users
+ 3. Federated users (eg: federated from on-prem environment)
+
+ 
+_Enable MFA for all human users_
+_Follow the principle of least privilege_
+ 
+ 
+ 
+**Types of Policies:**
+ 1. AWS Managed
+ 2. Customer Managed
+
+ 
+##### SCPs
+ Enable to implement controls
+
+
