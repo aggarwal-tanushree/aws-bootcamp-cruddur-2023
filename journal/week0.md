@@ -15,11 +15,13 @@
 11. Installed AWS CLI :white_check_mark:
 12. Create a Billing Alarm :white_check_mark:
 13. Create a Budget :white_check_mark:
+14. Scrubbed personal info from Github commit hostory using bfg ✅
 
 
 ## Personal Milestones
 1. First ever *Git commit*! :blush:
 2. Learned how to write *Markdown code*! :blush:
+3. Also learnt how to clear Github history!!
 
 Hurray for me!! :clap: :clap: :clap:
 
@@ -117,8 +119,8 @@ Then I verified the same on the AWS Management Console in *CloudWatch* service
 ### Launched AWS CloudShell and played around a bit
 ![CloudShell](assets/week0_AWS_Cloudshell.png)
 
-
-
+### Scrubbed off personal information from Github history using bfg
+![bfg command execution in Gitpod workspace](assets/week0_redacted_personal_info_using_bfg.png)
 
 
 
