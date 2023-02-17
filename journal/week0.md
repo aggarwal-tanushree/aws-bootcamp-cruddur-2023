@@ -126,3 +126,19 @@ Then I verified the same on the AWS Management Console in *CloudWatch* service
 
 ===========================
 
+
+## Personal Notes
+
+### Chirag's Pricing Video
+[week 0 Pricing video](https://www.youtube.com/watch?v=OVw3RrlP-sI&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=13)
+
+- Some services are billed differently in different regions (check example)
+- To setup clodwatch alarm for billing - we need to be in **US N. Virginia** region (as billing data is only visible in that region)
+- **10 cloudwatch alarms** are free under **AWS free-tier**
+- Budget service displays region as "global"
+- **Billing Alarm** - received only when _actual threshold reached_ v/s **Budget Alarm** is an advanced service and has feature to predict usage and set _forecast alerts_ for defined threshold and also send _actual threshold_ alarm
+- Cost Explorer - prepare financial reports, cost and usage reports (granualarity: daily, hourly etc. (hourly will show only for last 14 days), filter by region, cost tag etc.. Has default reports - eg: montly costs by service, etc.
+- [AWS Calculator](https://calculator.aws/#/) Can be used to check pricing of various services (eg: EC2 - month can be 30 days (720 hrs) or 31 days(744hrs), but tool provides cost estimate for 730 hours-average of both)
+
+### Ashish's Seurity Video
+[week 0 Security video](https://www.youtube.com/watch?v=4EMWBYVggQI&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=15) 
