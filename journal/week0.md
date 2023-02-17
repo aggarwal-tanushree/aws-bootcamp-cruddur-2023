@@ -2,9 +2,9 @@
 # Week 0 Journal 
 
 ## Tasks Status
-1. Watch AB's week 0 stream :white_check_mark:
-2. Watch Ashish's week 0 security video :white_check_mark:
-3. Watch Chirag's week 0 cost video :white_check_mark:
+1. Watch AB's [week 0 stream](https://www.youtube.com/watch?v=SG8blanhAOg&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=12) :white_check_mark:
+2. Watch Ashish's [week 0 security video](https://www.youtube.com/watch?v=4EMWBYVggQI&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=15) :white_check_mark:
+3. Watch Chirag's [week 0 cost video](https://www.youtube.com/watch?v=OVw3RrlP-sI&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=13) :white_check_mark:
 4. Security quiz :white_check_mark:
 5. Pricing quiz :white_check_mark:
 6. Recreate Conceptual Diagram in Lucid Charts or on a Napkin :white_check_mark:
@@ -15,7 +15,8 @@
 11. Installed AWS CLI :white_check_mark:
 12. Create a Billing Alarm :white_check_mark:
 13. Create a Budget :white_check_mark:
-14. Scrubbed personal info from Github commit hostory using bfg ✅
+14. Go through [Spend Considerations document](https://docs.google.com/document/d/10Hec7Or1ZUedl0ye-05mVPhYFR5-ySh2K8ZbFqTxu1w/) ✅
+15. Scrubbed personal info from Github commit history using bfg ✅
 
 
 ## Personal Milestones
