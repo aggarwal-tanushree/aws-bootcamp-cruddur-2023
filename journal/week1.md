@@ -142,4 +142,72 @@ CMD ["bash"]
 - executing the command "bash"
 
 
+- Create **Dockerfile** under **backend-flask**
+```
+FROM python:3.10-slim-buster
+
+# Inside Container
+# make a new folder inside container
+WORKDIR /backend-flask
+
+# Outside Container -> Inside Container
+# this contains the libraries want to install to run the app
+COPY requirements.txt requirements.txt
+
+# Inside Container
+# Install the python libraries used for the app
+RUN pip3 install -r requirements.txt
+
+# Outside Container -> Inside Container
+# . means everything in the current directory
+# first period . - /backend-flask (outside container)
+# second period . /backend-flask (inside container)
+COPY . .
+
+# Set Enviroment Variables (Env Vars)
+# Inside Container and wil remain set when the container is running
+ENV FLASK_ENV=development
+
+EXPOSE ${PORT}
+
+# CMD (Command)
+# python3 -m flask run --host=0.0.0.0 --port=4567
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0", "--port=4567"]
+```
+
+**Make sure to commit the file**
+
+Execute the following commands in the Terminal
+
+Installing pip3 
+```cd backend-flask
+pip3 install -r requirements.txt
+```
+
+Install the "flask" Python module, binding it to the i.p address "0.0.0.0" on port "4567" 
+_By default flask would run on 127.0.0.1 localhost, but while running containers, we need to bind it to 0.0.0.0
+
+`python3 -m flask run --host=0.0.0.0 --port=4567`
+
+![Flask running](assets/week1_install_flask.png)
+- Check the "ports" tab and click the "lock" button to "unlock" it and make it publically assessible.
+- Click the "address" to open it in a new tab
+![Flask running on port 4567](assets/week1_flask_running_port_4567.png)
+
+- We get a "404" error - File not found
+![404 error](assets/week1_flask_app_not_found)
+- So far we have been able to verify that our Flask server is running and accepting request
+- It is however giving 404 error for the resource
+![404 error in terminal](assets/week1_flask_app_not_found2.png)
+
+**So we now troubleshoot!!**
+- we just remebered that we forgot the set some environment variables, required for the app to work.
+- Let's set these env vars and re-run our app!
+`export FRONTEND_URL="*"`
+
+`export BACKEND_URL="*"`
+
+
+`export BACKEND_URL="*"`
+
 
