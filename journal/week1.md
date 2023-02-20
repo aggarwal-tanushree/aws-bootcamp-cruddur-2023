@@ -81,4 +81,65 @@ To check pricing models:
 - To stay in free tier usgae limits, follow these steps:
 	1. uncheck the option to "Log file SSE-KMS encryption" (as KMS encryption operations can be expensive)
 	2. For logging "Event types", uncheck "Data events" and "Insights events" -> as these are not free tier eligible. These event logging are betetr sutited for production environments
+
+## Week 1 live stream notes
+
+[Watch AB's week 1 stream](https://www.youtube.com/watch?v=zJnNe5Nv4tE&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=22)
+
+Containers
+- good to use if you are working in development & testing
+- a good way to ensure all OS dependencies, patch requirements etc.
+ 
+-  linuxserver.io has lots of container images
+	 
+**[Dockerhub](hub.docker.com)** - a **container registry**, provided by Docker 	 to host your own container images for private purposed and/or share them used when you build your own container image and **push** to a container registry (eg: Dockerhub).
+When someone wants to use this container image, they *pull** it from the registry
 	
+**OCI**  Open container images
+- standards around how you build container images and registries etc.
+- Docker hub follows OCI for registry
+- As long as you use a container image following the OCI standards, it should be compatible with anything outside of Dockerhub
+	
+	
+	 
+Step 1: 
+Create a **Dockerfile** under the **Backend** file structure
+Paste the following code inside the _Dockerfile_
+
+```
+FROM python:3.10-slim-buster
+
+WORKDIR /backend-flask
+
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
+
+COPY . .
+
+ENV FLASK_ENV=development
+
+EXPOSE ${PORT}
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0", "--port=4567"]
+```
+
+- Each line inside the Dockerfile is an instruction
+- With each file we are creating a _layer_ per se 
+- A docker file works on something called "union file system". Each layer of the Docker image is sandwitched together to form the final docker image
+
+- ` FROM python:3.10-slim-buster ` : Loading a docker file "python:3.10-slim-buster"
+- Here "[python](https://hub.docker.com/_/python)" is an image in Dockerhub 
+- "[3.10-slim-buster](https://github.com/docker-library/python/blob/1a68bced0dc5b7deb6ecd2f7ddacc1089323409d/3.10/slim-buster/Dockerfile)" is one of the many available _tags_ in this docker image
+
+
+- **[scratch](https://hub.docker.com/_/scratch)** is the name of an empty docker image. It is a minimal image reserved by Docker. It is used as a starting point for building containers.
+While `scratch` appears in Docker’s repository on the hub, you can’t pull it, run it, or tag any image with the name scratch. Instead, you can refer to it in your Dockerfile. For example, to create a minimal container using scratch:
+
+```FROM scratch
+ADD rootfs.tar.xz /
+CMD ["bash"]
+```
+- is copying "rootfs.tar.xz" to the root directory "/"
+- executing the command "bash"
+
+
+
