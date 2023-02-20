@@ -137,7 +137,7 @@ _By default flask would run on 127.0.0.1 localhost, but while running containers
 ![Flask running on port 4567](assets/week1_flask_running_port_4567.png)
 
 - We get a "404" error - File not found
-![404 error](assets/week1_flask_app_not_found)
+![404 error](assets/week1_flask_app_not_found.png)
 - So far we have been able to verify that our Flask server is running and accepting request
 - It is however giving 404 error for the resource
 ![404 error in terminal](assets/week1_flask_app_not_found2.png)
@@ -302,7 +302,7 @@ networks:
  
  ![compose up](assets/week1_docker_compose_up.png)
  
- ![compose complete](assests/week1_app_running.png)
+ ![compose complete](assets/week1_app_running.png)
  
  ### Make sure to unlock the ports for frontend and backend, and try launching the Frontend
  
