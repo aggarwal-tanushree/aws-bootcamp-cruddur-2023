@@ -17,72 +17,13 @@
 
 
 ## Personal Milestones
-1. 
-
-
-
-## Personal Notes
-
-[Spend consideration video](https://www.youtube.com/watch?v=OAMHu1NiYoI)
-
-## GitPod
-Provides the cloud development environment
-Free tier 
-	- 50 hours of Standard workspace usage per month
-	- Free tier standard configuration: 4 cores, 8GB RAM and 30GB storage
-	- Large configuration: 8 cores, 16GB RAM and 50GB storage
-	- Environemnt automatically stops after 30 minutes of in-activity
-	- Upto 4 parallel workspaces are supported (should try not to spin up multiple environemtns simultaneously, as usage is aggregated)
-
-_**Note** : Bootcamp requires average of 2 hours compute per week. Even if we go up to 11 hours compute per week, with standard configuration, we can stay within the free-tier limits_
-
-To check pricing models:
-[Gitpod pricing page](https://www.gitpod.io/pricing)
-
-![Pricing model details](assets/week1_gitpod_pricing.png)
-
-To check current usage:
-[Gitpod billing console](https://gitpod.io/user/billing)
-
-![My current usage](assets/week1_gitpod_my_current_usage.png)
-
-
-
-## Github Codespaces
-
-- With configuration: 2 cores, 4GB RAM, 15GB storage : 60 hours usage per month
- 
-- With configuration: 4 cores, 8GB RAM, 15GB storage : 30 hours usage per month
-
-
-As configuration increases, free usage hours decreases
-
-_**Note** maximum storage supported : **32 GB**_
-
-To check pricing models:
-[Github Codespaces pricing](https://github.com/features/codespaces)
-
-![Pricing model details](assets/week1_github_Codespaces_pricing.png)
+1. Started Docker dummy and was able to deploy first ever Docker image! 👏 👏 ⭐
+2.  
 
 
 
 
-## AWS Cloud 9
-- An independent platform acquired by AWS a few years ago
-- Uses EC2 as underlying technology
-- Can run AWS Cloud 9 free for the entire month, if using EC2 **t2.micro** or **t3.micro** instance type
-- Avoid using Cloud 9 if t2.micro is being used for other purposes within the account, as **usage bill is aggregated**
- 
- 
-## CloudTrail
-- API logging service
-- Logs trails in S3 buckets
-- By default, all trails are logged for **90 days**
-- To stay in free tier usgae limits, follow these steps:
-	1. uncheck the option to "Log file SSE-KMS encryption" (as KMS encryption operations can be expensive)
-	2. For logging "Event types", uncheck "Data events" and "Insights events" -> as these are not free tier eligible. These event logging are betetr sutited for production environments
-
-## Week 1 live stream notes
+## Week 1 Hand's on
 
 [Watch AB's week 1 stream](https://www.youtube.com/watch?v=zJnNe5Nv4tE&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=22)
 
@@ -177,7 +118,8 @@ CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0", "--port=4567"]
 
 **Make sure to commit the file**
 
-Execute the following commands in the Terminal
+
+**Let's try running Flask locally, before running the Docker image**
 
 Installing pip3 
 ```cd backend-flask
@@ -211,3 +153,226 @@ _By default flask would run on 127.0.0.1 localhost, but while running containers
 `export BACKEND_URL="*"`
 
 
+- Try again and this time append to the app url "api/activities/home"
+![Flask works](assets/week1_flask_works.png)
+
+![Flask output](assets/week1_flask_output.png)
+
+
+**RUN v/s CMD**
+**RUN command is used to create a layer in the image of the docker file.
+example: install a service
+RUN is used setup process, things that we need to put in the container image.** 
+
+**CMD is  - command that the container is going to run when it starts up
+what will actually run inside the container when we run that container**
+
+
+**Lets summarize what we have done so far**
+We followed these commands on the Terminal to first run Flask locally 
+
+```
+Run Python
+cd backend-flask
+export FRONTEND_URL="*"
+export BACKEND_URL="*"
+python3 -m flask run --host=0.0.0.0 --port=4567
+cd ..
+make sure to unlock the port on the port tab
+open the link for 4567 in your browser
+append to the url to /api/activities/home
+you should get back json
+```
+
+
+**Next up, let's run the container image!**
+First, we need to remove the FRONTEND and BACKEND environment variables we set few steps back. This is a precautionaly step to ensure that these variables do not interfere with our actual environment.
+_We can remove environment variables using the "unset" command_
+
+`unset FRONTEND_URL`
+
+`unset BACKEND_URL`
+
+### Build Container Image
+`docker build -t  backend-flask ./backend-flask`
+- -t is for tagging a name.
+- docker looked for the "Dockerfile" we created earlier in the "backend-flask" folder and used it to build the docker image 
+- image was built in "./backend-flask", i.e. our "work directory"
+
+![container image built](assets/week1_built_container.png)
+
+We can see this image by click on the "Docker" extension.
+Alternately, we can run the command:
+
+` docker images	`
+
+![docker extn](assets/week1_docker_image.png)
+
+**Docker help**
+` docker build --help `
+
+
+### Run Container
+` docker run --rm -p 4567:4567 -it backend-flask `
+
+Let's check the app url to see if it works
+_Note: we are expecting it to fail since we have not created the environment variables_
+
+![container run fails](assets/week1_container_404.png)
+
+### Pro Tip: 
+**You can debug while the container is being executed, by _RIGHT CLICK_ the image and _ATTACH SHELL_ **
+This opens a shell terminal and we can throubleshoot from here.
+
+![Debug container](assets/week1_debug_docker_execution.png)
+
+![Debug](assets/week1_debug_docker_execution2.png)
+
+
+### Run Container again, this time with env vars
+` docker run --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' backend-flask `
+
+![container works](assets/week1_container_works.png)
+
+### Pro Tip:
+**You can check the process details of a Container while it is running. Just open a new shell and type
+
+` docker ps `
+
+![docker ps](assets/week1_docker_ps.png)
+
+
+## Let's install the FrontEnd our application now!
+
+```
+cd frontend-react-js
+npm i
+```
+
+
+### Under "frontend-react-js" create a new "Dockerfile"
+
+```
+FROM node:16.18
+
+ENV PORT=3000
+
+COPY . /frontend-react-js
+WORKDIR /frontend-react-js
+RUN npm install
+EXPOSE ${PORT}
+CMD ["npm", "start"]
+```
+
+
+![npm install](assets/week1_npm_install.png)
+
+### Create docker-compose.yml at the project root dir
+
+```
+version: "3.8"
+services:
+  backend-flask:
+    environment:
+      FRONTEND_URL: "https://3000-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+      BACKEND_URL: "https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+    build: ./backend-flask
+    ports:
+      - "4567:4567"
+    volumes:
+      - ./backend-flask:/backend-flask
+  frontend-react-js:
+    environment:
+      REACT_APP_BACKEND_URL: "https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+    build: ./frontend-react-js
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend-react-js:/frontend-react-js
+
+# the name flag is a hack to change the default prepend folder
+# name when outputting the image names
+networks: 
+  internal-network:
+    driver: bridge
+    name: cruddur
+ ```
+ 
+ #### Right click this file and click, "Compose up"
+ 
+ ![compose up](assets/week1_docker_compose_up.png)
+ 
+ ![compose complete](assests/week1_app_running.png)
+ 
+ ### Make sure to unlock the ports for frontend and backend, and try launching the Frontend
+ 
+ ![unlock ports](assets/week1_unlock_ports.png)
+ 
+ ### Moment of truth! Lets open the Frontend to see if it works!
+ 
+ ![it works](assets/week1_app_works.png)
+ 
+ 
+ 
+ 
+ 
+ ## Personal Notes
+
+[Spend consideration video](https://www.youtube.com/watch?v=OAMHu1NiYoI)
+
+## GitPod
+Provides the cloud development environment
+Free tier 
+	- 50 hours of Standard workspace usage per month
+	- Free tier standard configuration: 4 cores, 8GB RAM and 30GB storage
+	- Large configuration: 8 cores, 16GB RAM and 50GB storage
+	- Environemnt automatically stops after 30 minutes of in-activity
+	- Upto 4 parallel workspaces are supported (should try not to spin up multiple environemtns simultaneously, as usage is aggregated)
+
+_**Note** : Bootcamp requires average of 2 hours compute per week. Even if we go up to 11 hours compute per week, with standard configuration, we can stay within the free-tier limits_
+
+To check pricing models:
+[Gitpod pricing page](https://www.gitpod.io/pricing)
+
+![Pricing model details](assets/week1_gitpod_pricing.png)
+
+To check current usage:
+[Gitpod billing console](https://gitpod.io/user/billing)
+
+![My current usage](assets/week1_gitpod_my_current_usage.png)
+
+
+
+## Github Codespaces
+
+- With configuration: 2 cores, 4GB RAM, 15GB storage : 60 hours usage per month
+ 
+- With configuration: 4 cores, 8GB RAM, 15GB storage : 30 hours usage per month
+
+
+As configuration increases, free usage hours decreases
+
+_**Note** maximum storage supported : **32 GB**_
+
+To check pricing models:
+[Github Codespaces pricing](https://github.com/features/codespaces)
+
+![Pricing model details](assets/week1_github_Codespaces_pricing.png)
+
+
+
+
+## AWS Cloud 9
+- An independent platform acquired by AWS a few years ago
+- Uses EC2 as underlying technology
+- Can run AWS Cloud 9 free for the entire month, if using EC2 **t2.micro** or **t3.micro** instance type
+- Avoid using Cloud 9 if t2.micro is being used for other purposes within the account, as **usage bill is aggregated**
+ 
+ 
+## CloudTrail
+- API logging service
+- Logs trails in S3 buckets
+- By default, all trails are logged for **90 days**
+- To stay in free tier usgae limits, follow these steps:
+	1. uncheck the option to "Log file SSE-KMS encryption" (as KMS encryption operations can be expensive)
+	2. For logging "Event types", uncheck "Data events" and "Insights events" -> as these are not free tier eligible. These event logging are betetr sutited for production environments
