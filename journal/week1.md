@@ -20,10 +20,34 @@
 1. Started Docker dummy and was able to deploy first ever Docker image! 👏 👏 ⭐
 2.  
 
+## Issues faced
+1. While creating the _notifications_ feature, I ran into an issue. The backend [URL](https://4567-aggarwaltan-awsbootcamp-kr8sz8i6rnd.ws-eu87.gitpod.io/api/activities/notifications) when hit for /api/activities/notifications api endpoint gave me an error.
+
+I did some troubleshooting and noticed a typo in **notifications_activities.py** file.
+I had spelled the class as **NotificationsActivitie** instead of **NotificationsActivities** . Got it to work post making the correction.
+![backed_error](aeests/week1_backed_error.png)
+
+Wroking!
+![working](assets/week1_backend_working.png)
 
 
+## Week 1 Assignment proof 
+**Note** : I have documented each of these tasks in great detail [here](#detailed-documentation)
 
-## Week 1 Hand's on
+#### Get Cruddur working
+![it works](assets/week1_app_works.png)
+
+### Notification feature
+**Note** : Detailed step-by-step documentation [here](#create-a-notification-feature)
+
+##### Frontend
+![frontend_notification_works](assets/week1_frontend_works.png)
+
+##### Backend
+![working](assets/week1_backend_working.png)
+
+
+## Detailed documentation
 
 [Watch AB's week 1 stream](https://www.youtube.com/watch?v=zJnNe5Nv4tE&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=22)
 
@@ -322,9 +346,245 @@ networks:
  - Many AWS services are integrated with OpenAPI (eg: API Gateway)
  - OpenAPI extension can be used to view the various API endpoints in our API file. (open the API file, and click the OpenAPI extension button to view this)
  - We can also get a preview of our avaibale API endpoints by clicking this highlighted button on the top right
+ - OpenAPI is a good standard for documenting our APIs
  ![OpenAPIextension](assets/week1_openAPI_extn.png)
  
+ 1. Launch Gitpod
+ 2. Install npm for the Frontend
+	```
+	cd frontend-react-js
+	npm i
+	```
+	![install_npm](assets/week1_frontend_npn_install.png)
+	
+3. Compose up _docker_compose.yml_
+	(right click the file -> compose up)
+	![docker_compose](assets/week1_docker_compose_app_again.png)
+
+4. Launch the frontend
+5. Register yourself as a user (this is not fully implemented. Most values are hardcoded as of now)
+6. For the activation code use **1234**
+7. After logging in, notice your username is showing as a registered user on the _left tab_
+8. Navigate to **Notifications** . You will notice an error. Notifications has not been coded yet, we will be doing this today!
+	![login_app](assets/week1_login_app.png)
+	
+[OpenAPI documentation](https://spec.openapis.org/oas/v3.1.0)
+
+#### Let's add code for our notifications feature
+9. We open and create a new API endpoint. 
+ -  Open the file _openapi-3.0.yml_ and then open the OpenAPI extension
+ -  Click the ... next to _PATHS_ and create click "OpenAPI: add new path" to add a new API endpoint.
+
+	[new_api](assets/week1_new_api.png)
+	
+ -  Give it the name "/api/activities/notifications". Let's refer a similar existing endpoint and add the following code to our endpoint:	
+	```
+	/api/activities/notifications:
+    get:
+      description: 'Return a feed of activity for all those I follow'
+      tags: 
+        - activities
+      parameters: []
+      responses:
+        '200':
+          description: Returns an array of activities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+	
+	```
+	
+	![frontend_flask](assets/week1_frontend_flask.png)
+	
+	- Commit _openapi-3.0.yml_
+
+#### Next, we modify **app.py** and add code for the notifications api
+1. Open _app.py_
+2. Search for the exiting api _/api/activities/home_
+3. Copy its code and paste below it. We will use this as a sample to create _/api/activities/notifications_
+```
+	@app.route("/api/activities/notifications", methods=['GET'])
+	def data_notifications():
+ 	 data = NotificationsActivities.run()
+  	return data, 200
+
+```
+4. Create a new file **notifications_activites.py" under **services**
+5. At line 7 of **app.py** (just below _from services.home_activities import *_ ) add the below code
+	`from services.notifications_activities import *`
+
+	![modify app.py](assets/week1_modify_apppy.png)
+
+6. Open the newly created **notifications_activites.py** and copy-paste the contents of **home_activites.py** (we can use the same code as home_activities.py as both these api's are using the same schema)
+Modify the __notifications_activities.py__ to add some dummy data
+example:
+```
+from datetime import datetime, timedelta, timezone
+class NotificationsActivities:
+  def run():
+    now = datetime.now(timezone.utc).astimezone()
+    results = [{
+      'uuid': '68f126b0-1ceb-4a33-88be-d90fa7109eee',
+      'handle':  'Tanushree Aggarwal',
+      'message': 'Loving this bootcamp!',
+      'created_at': (now - timedelta(days=2)).isoformat(),
+      'expires_at': (now + timedelta(days=5)).isoformat(),
+      'likes_count': 5,
+      'replies_count': 1,
+      'reposts_count': 0,
+      'replies': [{
+        'uuid': '26e12864-1c26-5c3a-9658-97a10f8fea67',
+        'reply_to_activity_uuid': '68f126b0-1ceb-4a33-88be-d90fa7109eee',
+        'handle':  'Worf',
+        'message': 'This post has a lot of honor!',
+        'likes_count': 0,
+        'replies_count': 0,
+        'reposts_count': 0,
+        'created_at': (now - timedelta(days=2)).isoformat()
+      }],
+    },
+    ]
+    return results
+
+```
+
+7. Launch the backend [url](https://4567-aggarwaltan-awsbootcamp-kr8sz8i6rnd.ws-eu87.gitpod.io/api/activities/notifications):  it will give a 404 (not found) error.
+Append the notifications api endpoint to it, and check the output.
+It works! Notice the output json 
+```
+"handle": "Tanushree Aggarwal",
+    "likes_count": 5,
+    "message": "Loving this bootcamp!",
+```
+
+![working](assets/week1_backend_working.png)
+
+8. Commit and sync both files to Github repo **app.py** and **notifications_activities.py**
+
+#### Next up, we work on the frontend code for Notifications feature
+1. Navigate to **App.js** under the **frontend_react_js** file structure
+2. We need to create a page for notifications
+3. Paste the below code at line 4(the exact location  does not matter, just make sure it is imported along with the other pages)
+	` import NotificationsFeedPage from './pages/NotificationsFeedPage'; `
+**Note:** it is grayed out since we have not created this file yet. Don't worry we will create it i a moment
+**Note:** we also noticed `import process from 'process';` at line 13 is grayed out, it we have not created it. We can delete this line of code.
+
+4. Next we add the below code to define a path for _notifications_
+```  
+	  {
+    		path: "/notifications",
+    		element: <NotificationsFeedPage />
+  	   },
+  ```
+5. Taking **pages/HomeFeedPage.js** as reference, create **pages/NotificationsFeedPage.js**. Refer code below
+  
+ ```
+ import './NotificationsFeedPage.css';
+import React from "react";
+
+import DesktopNavigation  from '../components/DesktopNavigation';
+import DesktopSidebar     from '../components/DesktopSidebar';
+import ActivityFeed from '../components/ActivityFeed';
+import ActivityForm from '../components/ActivityForm';
+import ReplyForm from '../components/ReplyForm';
+
+// [TODO] Authenication
+import Cookies from 'js-cookie'
+
+export default function HomeFeedPage() {
+  const [activities, setActivities] = React.useState([]);
+  const [popped, setPopped] = React.useState(false);
+  const [poppedReply, setPoppedReply] = React.useState(false);
+  const [replyActivity, setReplyActivity] = React.useState({});
+  const [user, setUser] = React.useState(null);
+  const dataFetchedRef = React.useRef(false);
+
+  const loadData = async () => {
+    try {
+      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/notifications`
+      const res = await fetch(backend_url, {
+        method: "GET"
+      });
+      let resJson = await res.json();
+      if (res.status === 200) {
+        setActivities(resJson)
+      } else {
+        console.log(res)
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const checkAuth = async () => {
+    console.log('checkAuth')
+    // [TODO] Authenication
+    if (Cookies.get('user.logged_in')) {
+      setUser({
+        display_name: Cookies.get('user.name'),
+        handle: Cookies.get('user.username')
+      })
+    }
+  };
+
+  React.useEffect(()=>{
+    //prevents double call
+    if (dataFetchedRef.current) return;
+    dataFetchedRef.current = true;
+
+    loadData();
+    checkAuth();
+  }, [])
+
+  return (
+    <article>
+      <DesktopNavigation user={user} active={'home'} setPopped={setPopped} />
+      <div className='content'>
+        <ActivityForm  
+          popped={popped}
+          setPopped={setPopped} 
+          setActivities={setActivities} 
+        />
+        <ReplyForm 
+          activity={replyActivity} 
+          popped={poppedReply} 
+          setPopped={setPoppedReply} 
+          setActivities={setActivities} 
+          activities={activities} 
+        />
+        <ActivityFeed 
+          title="Home" 
+          setReplyActivity={setReplyActivity} 
+          setPopped={setPoppedReply} 
+          activities={activities} 
+        />
+      </div>
+      <DesktopSidebar user={user} />
+    </article>
+  );
+}
+ ```
+  
+6. also create a blank **pages/NotificationsFeedPage.css** for any css we may require to add.
+
+![create_notification_frontend](assets/week1_create_frontend_notification_page.png)
+
+8. Navigate to **pages/DesktopNavigation.js** and verify presence of **notifications** endpoint
+```
+	notificationsLink = <DesktopNavigationLink 
+      url="/notifications" 
+      name="Notifications" 
+      handle="notifications" 
+```
  
+9. **We are all set! Refresh the Fronend url for [notifications](https://4567-aggarwaltan-awsbootcamp-kr8sz8i6rnd.ws-eu87.gitpod.io/api/activities/notifications) feature **
+![frontend_notification_works](assets/week1_frontend_works.png)
+
+**We just completed implementing a part of the Notifications feature for our Cruddur app! Hooray to us!! **
+
  ====================================================================
  
  ====================================================================
@@ -332,6 +592,8 @@ networks:
  ====================================================================
  
  ## Personal Notes
+
+
 
 [Spend consideration video](https://www.youtube.com/watch?v=OAMHu1NiYoI)
 
