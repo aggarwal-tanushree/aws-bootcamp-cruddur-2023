@@ -25,7 +25,7 @@
 
 I did some troubleshooting and noticed a typo in **notifications_activities.py** file.
 I had spelled the class as **NotificationsActivitie** instead of **NotificationsActivities** . Got it to work post making the correction.
-![backed_error](aeests/week1_backed_error.png)
+![backend_error](aeests/week1_backend_error.png)
 
 Wroking!
 ![working](assets/week1_backend_working.png)
@@ -245,7 +245,7 @@ _Note: we are expecting it to fail since we have not created the environment var
 ![container run fails](assets/week1_container_404.png)
 
 ### Pro Tip: 
-**You can debug while the container is being executed, by _RIGHT CLICK_ the image and _ATTACH SHELL_ **
+**You can debug while the container is being executed, by _RIGHT CLICK_ the image and _ATTACH SHELL_**
 This opens a shell terminal and we can throubleshoot from here.
 
 ![Debug container](assets/week1_debug_docker_execution.png)
@@ -259,7 +259,7 @@ This opens a shell terminal and we can throubleshoot from here.
 ![container works](assets/week1_container_works.png)
 
 ### Pro Tip:
-**You can check the process details of a Container while it is running. Just open a new shell and type
+**You can check the process details of a Container while it is running. Just open a new shell and type**
 
 ` docker ps `
 
@@ -365,7 +365,7 @@ networks:
 5. Register yourself as a user (this is not fully implemented. Most values are hardcoded as of now)
 6. For the activation code use **1234**
 7. After logging in, notice your username is showing as a registered user on the _left tab_
-8. Navigate to **Notifications** . You will notice an error. Notifications has not been coded yet, we will be doing this today!
+8. Navigate to **Notifications** . You will notice an error. Notifications feature has not been coded yet, we will be doing this today!
 	![login_app](assets/week1_login_app.png)
 	
 [OpenAPI documentation](https://spec.openapis.org/oas/v3.1.0)
@@ -412,7 +412,7 @@ networks:
   	return data, 200
 
 ```
-4. Create a new file **notifications_activites.py" under **services**
+4. Create a new file **notifications_activites.py** under **services**
 5. At line 7 of **app.py** (just below _from services.home_activities import *_ ) add the below code
 	`from services.notifications_activities import *`
 
@@ -580,10 +580,10 @@ export default function HomeFeedPage() {
       handle="notifications" 
 ```
  
-9. **We are all set! Refresh the Fronend url for [notifications](https://4567-aggarwaltan-awsbootcamp-kr8sz8i6rnd.ws-eu87.gitpod.io/api/activities/notifications) feature **
+9. **We are all set! Refresh the Fronend url for** [notifications](https://4567-aggarwaltan-awsbootcamp-kr8sz8i6rnd.ws-eu87.gitpod.io/api/activities/notifications) feature.
 ![frontend_notification_works](assets/week1_frontend_works.png)
 
-**We just completed implementing a part of the Notifications feature for our Cruddur app! Hooray to us!! **
+**We just completed implementing a part of the Notifications feature for our Cruddur app!** Hooray to us!!
 
  ====================================================================
  
