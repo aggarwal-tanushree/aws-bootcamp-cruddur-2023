@@ -313,8 +313,23 @@ networks:
  ![it works](assets/week1_app_works.png)
  
  
+ ====================================================================
+ 
+ ## Create a Notification feature
+ [AB's video](https://www.youtube.com/watch?v=k-_o0cCpksk&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=28)
+ 
+ - OpenAPI previouslly called "Swagger", is a standard for open APIs
+ - Many AWS services are integrated with OpenAPI (eg: API Gateway)
+ - OpenAPI extension can be used to view the various API endpoints in our API file. (open the API file, and click the OpenAPI extension button to view this)
+ - We can also get a preview of our avaibale API endpoints by clicking this highlighted button on the top right
+ ![OpenAPIextension](assets/week1_openAPI_extn.png)
  
  
+ ====================================================================
+ 
+ ====================================================================
+ 
+ ====================================================================
  
  ## Personal Notes
 
