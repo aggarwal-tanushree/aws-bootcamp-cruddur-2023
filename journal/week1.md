@@ -25,7 +25,7 @@
 
 I did some troubleshooting and noticed a typo in **notifications_activities.py** file.
 I had spelled the class as **NotificationsActivitie** instead of **NotificationsActivities** . Got it to work post making the correction.
-![backend_error](aeests/week1_backend_error.png)
+![backend_error](assets/week1_backed_error.png)
 
 Wroking!
 ![working](assets/week1_backend_working.png)
