@@ -15,12 +15,14 @@
 11. [Run Postgres Container and ensure it works](https://www.youtube.com/watch?v=CbQNMaa6zTg&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=28) :white_check_mark:
 12. Submit Pricing quiz :white_check_mark:
 13. Submit Security quiz :white_check_mark:
+14. Cloud careers hw-1 
 
 
 
 ## Personal Milestones  👯
 1. Started as a Docker dummy and was able to deploy first ever Docker image! 👏 👏 ⭐
 2.  Week one was quite technical and challenging. Watching and re-watching AB's videos helped we swim through. All assignments were completed in time! 👏 ⭐ 🥇
+
 
 ## Issues faced 😰
 1. While creating the _notifications_ feature, I ran into an issue. The backend [URL](https://4567-aggarwaltan-awsbootcamp-kr8sz8i6rnd.ws-eu87.gitpod.io/api/activities/notifications) when hit for /api/activities/notifications api endpoint gave me an error.
@@ -50,6 +52,7 @@ Wroking! 😺
 
 ![working](assets/week1_backend_working.png)
 
+
 ### PostgreSQL local 
 ![postgresql conn test](assets/week1_configure_postgres_explorer.png)
 
@@ -65,7 +68,7 @@ Wroking! 😺
 
 ### [Pricing video notes](#pricing-video-notes)
 
-
+### [Security video notes](#security-video-notes)
 
 
 
@@ -206,6 +209,7 @@ _By default flask would run on 127.0.0.1 localhost, but while running containers
 
 
 **RUN v/s CMD**
+
 **RUN command is used to create a layer in the image of the docker file.
 example: install a service
 RUN is used setup process, things that we need to put in the container image.** 
@@ -369,6 +373,7 @@ networks:
  - OpenAPI extension can be used to view the various API endpoints in our API file. (open the API file, and click the OpenAPI extension button to view this)
  - We can also get a preview of our avaibale API endpoints by clicking this highlighted button on the top right
  - OpenAPI is a good standard for documenting our APIs
+ 
  ![OpenAPIextension](assets/week1_openAPI_extn.png)
  
  1. Launch Gitpod
@@ -629,15 +634,19 @@ export default function HomeFeedPage() {
     working_dir: /home/dynamodblocal
   ```
 2. Run _Docker compose_ on _docker-compose.yml_
+
 ![Compose_up_dynamoDB](assets/week1_dynamodb_dockeryml.png)
 
 3. Unlock the ports
+
 ![unlock port](assets/week1_unlock_dynamodb_port.png)
 
 4. Let's try connecting to our DynamoDB and create a test table, as sanity check
+
 _Note:_ DynamoDB commands picked from [100 days of cloud](https://github.com/100DaysOfCloud/challenge-dynamodb-local)
 
 **Create a table**
+
 	```
 	aws dynamodb create-table \
 	    --endpoint-url http://localhost:8000 \
@@ -648,8 +657,10 @@ _Note:_ DynamoDB commands picked from [100 days of cloud](https://github.com/100
 	    --key-schema AttributeName=Artist,KeyType=HASH AttributeName=SongTitle,KeyType=RANGE \
 	    --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 \
 	    --table-class STANDARD
-	```    
+	``` 
+	
 **Create an Item**
+
 	```
 	aws dynamodb put-item \
 	    --endpoint-url http://localhost:8000 \
@@ -658,9 +669,13 @@ _Note:_ DynamoDB commands picked from [100 days of cloud](https://github.com/100
 		'{"Artist": {"S": "No One You Know"}, "SongTitle": {"S": "Call Me Today"}, "AlbumTitle": {"S": "Somewhat Famous"}}' \
 	    --return-consumed-capacity TOTAL  
 	```
+	
 **List Tables**
+	
 	`aws dynamodb list-tables --endpoint-url http://localhost:8000`
+
 **Get Records**
+	
 	`aws dynamodb scan --table-name Music --query "Items" --endpoint-url http://localhost:8000`
 
 ![dynamodb_working](assets/week1_dynamodb_test.png)
@@ -670,7 +685,8 @@ _Note:_ DynamoDB commands picked from [100 days of cloud](https://github.com/100
 ## Create PostgreSQL local using Docker
 
 1.  **Integrate PostgreSQL code in _docker-compose.yml_**
- ```yaml
+
+```yaml
  services:
   db:
     image: postgres:13-alpine
@@ -688,9 +704,11 @@ volumes:
   ```
  
 2. Run _Docker compose_ on _docker-compose.yml_
-![Compose_up_dynamoDB](assets/week1_dynamodb_dockeryml.png)
+
+![Compose_up_postgres](assets/week1_dynamodb_dockeryml.png)
 
 3. Unlock the ports
+
 ![unlock port](assets/week1_postgresql_port.png)
 
 4. Install PostgreSQL client into GitPod  
@@ -703,6 +721,7 @@ volumes:
       sudo apt update
       sudo apt install -y postgresql-client-13 libpq-dev
 ```
+
 **Note:**  _gitpod.yml_ is the file that gets called everytime we load our GitPod environment. Since we have added the postgreSQL client installation commands to it, the PostgreSQL client will be installed every time our GitPod environemnt gets loaded.
 
 5. We have taken care of PostgreSQL client installation for new GitPod environemnt launch, however we also wish to test our local PostgreSQL right now.
@@ -715,12 +734,14 @@ volumes:
       sudo apt update
       sudo apt install -y postgresql-client-13 libpq-dev
 ``` 
+
 ![installing postgres client](assets/week1_installing_postgres_client.png)
 
 
 6. Next we install the _PostgreSQL explorer_ extension in our current GitPod environment and also add it to our **gitpod.yml**
 - In order to install it to our current GitPod environment, let's go to  _extensions_ , search "PostgreSQL" and install it.
 - Post this we click the _settings_ button on this extension and click _"add to gitpod.yml"_
+
 ![postgresql_extn](assets/week1_add_postgres_client_gitpodyml.png)
 
 7. We now configure the PostreSQL client extension and test our connection.
@@ -740,14 +761,19 @@ volumes:
 ![postgresql conn test](assets/week1_configure_postgres_explorer.png)
 
 **Note:** in step-8 we can alternately verify our configuration by using the PostgreSQL client, by executing the following commands in our bash shell
+
 ```sh
 	psql -Upostgres --host localhost
 	\l
 	\q
 ```
+
 syntax:
+
 	psql -U<username> --host <hostname> (to connect to "hostanme> as user "username")
+	
 	\l  (to list contents)
+	
 	\q (to quit PostgreSQL shell)
 
 ![postgres_client_cmds](assets/week1_postgres_client_cmds.png)
@@ -823,3 +849,61 @@ To check pricing models:
 - To stay in free tier usgae limits, follow these steps:
 	1. uncheck the option to "Log file SSE-KMS encryption" (as KMS encryption operations can be expensive)
 	2. For logging "Event types", uncheck "Data events" and "Insights events" -> as these are not free tier eligible. These event logging are betetr sutited for production environments
+
+
+### Security video notes
+[Docker Container security video](https://www.youtube.com/watch?v=OjZz4D0B-cA&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=26)
+www.cloudsecuritybootcamp.com
+
+- Container first strategy: easy portability, re-use, automation to reduce recovery times
+- docker default opensource tool everyone uses
+- **Unmanaged container service** : eg: Docker - runs outside the cloud (on some server or physical device like laptop)
+- **Managed container service** : eg: Amazon ECS - runs in the cloud managed by Cloud providers. Easily scalable. integration with many exisitng AWS services. Automation using Blue-Green deployments
+- Cloud security - limited by features provided by CSP
+- **Docker components** :
+	1. Client (eg: your laptop) where you install the Docker servcie
+		Client features:
+			- build
+			- pull
+			- run
+	2. Docker Server - location where you want to run the containers
+		connects to docker client via REST APIs
+	3. Docker Registry - can be public docker images registered in DockerHub 
+			   - or private docker registry to store private docker images	
+
+- **Container Security Components**
+	1. docker & host config : docker host - i.e. servers where our docker containers will be running
+
+- **Security best practices** :
+	1. Keep host and docker updated with security patches. Keep your Docker version up-to-date	
+	2. Docker daemon and container -should run as non-ROOT user mode (for Container escape vulnerability)
+	3. Limit size and resources - Container should be light weight and contain only services required for it to work. 10MB is a good size for Docker image
+	Note: Amazon Linux and Alpine OS are examples of Docker OS.
+	4. No secret keys/data should be stored in Docker or Docker compose files. File system shoudl be RO
+	5. Trusting private v/s public registry
+	6. Limit the long term storage used on Docker container. If at all required, use a databse (eg: DynamoDB etc.)
+	7. DevSecOps practices should be used for building app security
+	8. test all code for vulnerabilities before productionizing
+	
+- **Docker Compose** 
+	- standard way of using docker: **docker file**
+	- to build multiple apps, you need to run Docker compose multiple times
+	
+- **Docker compose vulnerabilite** :
+	- Snyk opensource security (Opensource) : to check vulnerability in _dockerfiles_
+
+- **AWS Secrets Manager** - a great way to not store secret information in Dockerfiles. (if using Dockers in the cloud)
+	- not all services have assess to secrets manager
+	- Secrets manager has 30 day free trial.
+	- Post 30 days, you pay $0.40 per secret per month
+	- $0.05 per 10k API calls
+	-  **Hashicorp vault** is another way of storeing secrets - has free and managed versions. In free you manage both client and server yourself. **Valut AWS Auth** library can be used to rotate secrets, without having to store them in a Dockerfile.
+
+- **Amazon Inspector/Clair**
+- To check container image vulnerabilities.
+- Amazon Inspector has integration with Amazon ECR
+- Free 15 days trial
+- **Clair** - opensource. requires client & server
+- **Snyk Opersource security** - snyk container scanning can be used check for container vulnerabilities
+
+**docs.docker.com** -  has documentation to help get started with Docker.
