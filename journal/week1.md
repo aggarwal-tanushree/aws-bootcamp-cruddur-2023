@@ -5,29 +5,31 @@
 1. [Watch AB's week 1 stream](https://www.youtube.com/watch?v=zJnNe5Nv4tE&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=22) :white_check_mark:
 2. [Watch Grading Homework Summaries](https://www.youtube.com/watch?v=FKAScachFgk&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=25) :white_check_mark:
 3. [Watch Chirag's Week 1 - Spending Considerations](https://www.youtube.com/watch?v=OAMHu1NiYoI&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=24) :white_check_mark:
-4. [Watch Remember to Commit Your Code](https://www.youtube.com/watch?v=b-idMgFFcpg&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=23)
-5. [Watch Ashish's Week 1 - Container Security Considerations](https://www.youtube.com/watch?v=OjZz4D0B-cA&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=25)
-6. [Watch Containerize Application (Dockerfiles, Docker Compose)](https://www.youtube.com/watch?v=zJnNe5Nv4tE&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=22)
-7. [Document the Notification Endpoint for the OpenAI Document](https://www.youtube.com/watch?v=k-_o0cCpksk&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=27)
-8. [Write a Flask Backend Endpoint for Notifications](https://www.youtube.com/watch?v=k-_o0cCpksk&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=27)
-9. [Write a React Page for Notifications](https://www.youtube.com/watch?v=k-_o0cCpksk&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=27)
-10. [Run DynamoDB Local Container and ensure it works](https://www.youtube.com/watch?v=CbQNMaa6zTg&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=28)
-11. [Run Postgres Container and ensure it works](https://www.youtube.com/watch?v=CbQNMaa6zTg&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=28)
+4. [Watch Remember to Commit Your Code](https://www.youtube.com/watch?v=b-idMgFFcpg&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=23) :white_check_mark:
+5. [Watch Ashish's Week 1 - Container Security Considerations](https://www.youtube.com/watch?v=OjZz4D0B-cA&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=25) :white_check_mark:
+6. [Watch Containerize Application (Dockerfiles, Docker Compose)](https://www.youtube.com/watch?v=zJnNe5Nv4tE&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=22) :white_check_mark:
+7. [Document the Notification Endpoint for the OpenAI Document](https://www.youtube.com/watch?v=k-_o0cCpksk&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=27) :white_check_mark:
+8. [Write a Flask Backend Endpoint for Notifications](https://www.youtube.com/watch?v=k-_o0cCpksk&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=27) :white_check_mark:
+9. [Write a React Page for Notifications](https://www.youtube.com/watch?v=k-_o0cCpksk&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=27) :white_check_mark:
+10. [Run DynamoDB Local Container and ensure it works](https://www.youtube.com/watch?v=CbQNMaa6zTg&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=28) :white_check_mark:
+11. [Run Postgres Container and ensure it works](https://www.youtube.com/watch?v=CbQNMaa6zTg&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=28) :white_check_mark:
+12. Submit Pricing quiz :white_check_mark:
+13. Submit Security quiz :white_check_mark:
 
 
 
-## Personal Milestones
-1. Started Docker dummy and was able to deploy first ever Docker image! 👏 👏 ⭐
-2.  
+## Personal Milestones  👯
+1. Started as a Docker dummy and was able to deploy first ever Docker image! 👏 👏 ⭐
+2.  Week one was quite technical and challenging. Watching and re-watching AB's videos helped we swim through. All assignments were completed in time! 👏 ⭐ 🥇
 
-## Issues faced
+## Issues faced 😰
 1. While creating the _notifications_ feature, I ran into an issue. The backend [URL](https://4567-aggarwaltan-awsbootcamp-kr8sz8i6rnd.ws-eu87.gitpod.io/api/activities/notifications) when hit for /api/activities/notifications api endpoint gave me an error.
 
 I did some troubleshooting and noticed a typo in **notifications_activities.py** file.
 I had spelled the class as **NotificationsActivitie** instead of **NotificationsActivities** . Got it to work post making the correction.
 ![backend_error](assets/week1_backed_error.png)
 
-Wroking!
+Wroking! 😺
 ![working](assets/week1_backend_working.png)
 
 
@@ -41,10 +43,30 @@ Wroking!
 **Note** : Detailed step-by-step documentation [here](#create-a-notification-feature)
 
 ##### Frontend
+
 ![frontend_notification_works](assets/week1_frontend_works.png)
 
 ##### Backend
+
 ![working](assets/week1_backend_working.png)
+
+### PostgreSQL local 
+![postgresql conn test](assets/week1_configure_postgres_explorer.png)
+
+![postgres_client_cmds](assets/week1_postgres_client_cmds.png)
+
+**Note** : Detailed step-by-step documentation [here](#create-postgresql-local-using-docker)
+
+### DynamoDB local
+
+![dynamodb_working](assets/week1_dynamodb_test.png)
+
+**Note** : Detailed step-by-step documentation [here](#create-dynamodb-local-using-docker)
+
+### [Pricing video notes](#pricing-video-notes)
+
+
+
 
 
 ## Detailed documentation
@@ -193,7 +215,7 @@ what will actually run inside the container when we run that container**
 
 
 **Lets summarize what we have done so far**
-We followed these commands on the Terminal to first run Flask locally 
+We executed these commands on the Terminal to first run Flask locally 
 
 ```
 Run Python
@@ -276,7 +298,7 @@ npm i
 
 ### Under "frontend-react-js" create a new "Dockerfile"
 
-```
+```js
 FROM node:16.18
 
 ENV PORT=3000
@@ -293,7 +315,7 @@ CMD ["npm", "start"]
 
 ### Create docker-compose.yml at the project root dir
 
-```
+```yaml
 version: "3.8"
 services:
   backend-flask:
@@ -375,10 +397,10 @@ networks:
  -  Open the file _openapi-3.0.yml_ and then open the OpenAPI extension
  -  Click the ... next to _PATHS_ and create click "OpenAPI: add new path" to add a new API endpoint.
 
-	[new_api](assets/week1_new_api.png)
+	![new_api](assets/week1_new_api.png)
 	
  -  Give it the name "/api/activities/notifications". Let's refer a similar existing endpoint and add the following code to our endpoint:	
-	```
+	```yaml
 	/api/activities/notifications:
     get:
       description: 'Return a feed of activity for all those I follow'
@@ -421,7 +443,7 @@ networks:
 6. Open the newly created **notifications_activites.py** and copy-paste the contents of **home_activites.py** (we can use the same code as home_activities.py as both these api's are using the same schema)
 Modify the __notifications_activities.py__ to add some dummy data
 example:
-```
+```py
 from datetime import datetime, timedelta, timezone
 class NotificationsActivities:
   def run():
@@ -482,7 +504,7 @@ It works! Notice the output json
 5. Taking **pages/HomeFeedPage.js** as reference, create **pages/NotificationsFeedPage.js**. Refer code below
   
  ```
- import './NotificationsFeedPage.css';
+import './NotificationsFeedPage.css';
 import React from "react";
 
 import DesktopNavigation  from '../components/DesktopNavigation';
@@ -573,8 +595,8 @@ export default function HomeFeedPage() {
 ![create_notification_frontend](assets/week1_create_frontend_notification_page.png)
 
 8. Navigate to **pages/DesktopNavigation.js** and verify presence of **notifications** endpoint
-```
-	notificationsLink = <DesktopNavigationLink 
+```js
+      notificationsLink = <DesktopNavigationLink 
       url="/notifications" 
       name="Notifications" 
       handle="notifications" 
@@ -585,6 +607,154 @@ export default function HomeFeedPage() {
 
 **We just completed implementing a part of the Notifications feature for our Cruddur app!** Hooray to us!!
 
+
+====================================================================
+ 
+ ## Create DynamoDB local using Docker
+
+1. **Integrate DynamoDB code in _docker-compose.yml_**
+  ```yaml
+  services:
+  dynamodb-local:
+    # https://stackoverflow.com/questions/67533058/persist-local-dynamodb-data-in-volumes-lack-permission-unable-to-open-databa
+    # We needed to add user:root to get this working.
+    user: root
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+  ```
+2. Run _Docker compose_ on _docker-compose.yml_
+![Compose_up_dynamoDB](assets/week1_dynamodb_dockeryml.png)
+
+3. Unlock the ports
+![unlock port](assets/week1_unlock_dynamodb_port.png)
+
+4. Let's try connecting to our DynamoDB and create a test table, as sanity check
+_Note:_ DynamoDB commands picked from [100 days of cloud](https://github.com/100DaysOfCloud/challenge-dynamodb-local)
+
+**Create a table**
+	```
+	aws dynamodb create-table \
+	    --endpoint-url http://localhost:8000 \
+	    --table-name Music \
+	    --attribute-definitions \
+		AttributeName=Artist,AttributeType=S \
+		AttributeName=SongTitle,AttributeType=S \
+	    --key-schema AttributeName=Artist,KeyType=HASH AttributeName=SongTitle,KeyType=RANGE \
+	    --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 \
+	    --table-class STANDARD
+	```    
+**Create an Item**
+	```
+	aws dynamodb put-item \
+	    --endpoint-url http://localhost:8000 \
+	    --table-name Music \
+	    --item \
+		'{"Artist": {"S": "No One You Know"}, "SongTitle": {"S": "Call Me Today"}, "AlbumTitle": {"S": "Somewhat Famous"}}' \
+	    --return-consumed-capacity TOTAL  
+	```
+**List Tables**
+	`aws dynamodb list-tables --endpoint-url http://localhost:8000`
+**Get Records**
+	`aws dynamodb scan --table-name Music --query "Items" --endpoint-url http://localhost:8000`
+
+![dynamodb_working](assets/week1_dynamodb_test.png)
+
+**This concludes our DynamoDB local installation and verification**
+
+## Create PostgreSQL local using Docker
+
+1.  **Integrate PostgreSQL code in _docker-compose.yml_**
+ ```yaml
+ services:
+  db:
+    image: postgres:13-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+volumes:
+  db:
+    driver: local
+  ```
+ 
+2. Run _Docker compose_ on _docker-compose.yml_
+![Compose_up_dynamoDB](assets/week1_dynamodb_dockeryml.png)
+
+3. Unlock the ports
+![unlock port](assets/week1_postgresql_port.png)
+
+4. Install PostgreSQL client into GitPod  
+
+```yaml
+  - name: postgres
+    init: |
+      curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
+      echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
+      sudo apt update
+      sudo apt install -y postgresql-client-13 libpq-dev
+```
+**Note:**  _gitpod.yml_ is the file that gets called everytime we load our GitPod environment. Since we have added the postgreSQL client installation commands to it, the PostgreSQL client will be installed every time our GitPod environemnt gets loaded.
+
+5. We have taken care of PostgreSQL client installation for new GitPod environemnt launch, however we also wish to test our local PostgreSQL right now.
+   In order to do so, we need to install PostgreSQL manually in our current environment.
+   For this, we will exectute the same commands we added to _gitpod.yml_ in our current bash shell.
+   
+ ```sh
+      curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
+      echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
+      sudo apt update
+      sudo apt install -y postgresql-client-13 libpq-dev
+``` 
+![installing postgres client](assets/week1_installing_postgres_client.png)
+
+
+6. Next we install the _PostgreSQL explorer_ extension in our current GitPod environment and also add it to our **gitpod.yml**
+- In order to install it to our current GitPod environment, let's go to  _extensions_ , search "PostgreSQL" and install it.
+- Post this we click the _settings_ button on this extension and click _"add to gitpod.yml"_
+![postgresql_extn](assets/week1_add_postgres_client_gitpodyml.png)
+
+7. We now configure the PostreSQL client extension and test our connection.
+- click the database extension to open the database explorer
+- click the "+" button, to open a new connection window
+- in the connection window, select _Database Type_ as _PostgreSQL_
+- enter the following details for the connection:
+	- Connection name: Test connection (or any other string identifier)
+	- host: leave default as 127.0.0.1
+	- port: PostgreSQL port _5432_
+	- username: postgres (this is the name we entered in our yaml file)
+	- password: password (this is the value we entered in our yaml file)
+	- Databases: leave blank as we have not created any databse schemas yet
+- click _Connect_ (this should result in a successful connection and return statement _connect success_ beign discplayed at the top of the connection. In case it fails, we will need to troubleshoot our installation and credentials in yaml file)
+- notice _postres_ database connection displayed in the DB explorer, expand it to see the default schemas created by PostgreSQL
+
+![postgresql conn test](assets/week1_configure_postgres_explorer.png)
+
+**Note:** in step-8 we can alternately verify our configuration by using the PostgreSQL client, by executing the following commands in our bash shell
+```sh
+	psql -Upostgres --host localhost
+	\l
+	\q
+```
+syntax:
+	psql -U<username> --host <hostname> (to connect to "hostanme> as user "username")
+	\l  (to list contents)
+	\q (to quit PostgreSQL shell)
+
+![postgres_client_cmds](assets/week1_postgres_client_cmds.png)
+	
+**This concludes our PostgreSQL local installation and verification**
+
+
  ====================================================================
  
  ====================================================================
@@ -594,7 +764,7 @@ export default function HomeFeedPage() {
  ## Personal Notes
 
 
-
+### Pricing video notes
 [Spend consideration video](https://www.youtube.com/watch?v=OAMHu1NiYoI)
 
 ## GitPod
