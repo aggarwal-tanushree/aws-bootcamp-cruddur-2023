@@ -1,11 +1,38 @@
 # Week 2 — Distributed Tracing
+# Week 2 Journal 
 
 ## Task status
+1. Watch Week 2 Live-Stream [Video](https://www.youtube.com/watch?v=2GD9xCzRId4&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=30)
+2. Watch Chirag Week 2 - Spending Considerations
+3. Watched Ashish's Week 2 - Observability Security Considerations [video](https://www.youtube.com/watch?v=bOf4ITxAcXc&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=31)
+4. Instrument Honeycomb with [OTEL](https://www.youtube.com/watch?v=2GD9xCzRId4&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=30)
+5. Instrument AWS [X-Ray](https://www.youtube.com/watch?v=n2DTsuBrD_A&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=32)
+6. Configure custom logger to send to CloudWatch [Logs](https://www.youtube.com/watch?v=ipdFizZjOF4&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=33)
+7. Integrate Rollbar and capture and [error](https://www.youtube.com/watch?v=xMBDAb5SEU4&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=35)
+
+====================================================================================
+
+## Personal Milestones  👯
+1.
+
+====================================================================================
 
 ## Week 2 assignment proof
 
-## Issues faces
+====================================================================================
 
+## Issues faced 😰
+
+====================================================================================
+
+## Homework proof
+**Note** : I have documented each of these tasks in great detail [here](#detailed-documentation)
+
+[Ashish's security considerations](#security-considerations)
+
+====================================================================================
+
+## Detailed documentation
 
 ## Configuring a Honeycomb Trace!
 
@@ -182,3 +209,75 @@ We see Telemetry logs! Good job!
 
 
 #### Next up,  let's create a for our Trace!
+
+
+
+
+
+
+=========================================================
+## Week 2 - Security considerations
+[Ashish's Observability vs Monitoring Explained in AWS](https://www.youtube.com/watch?v=bOf4ITxAcXc&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=32)
+
+#### All about Logging!
+
+Suppose you have a traditional application, say running on your laptopp. If something goes wrong and the application is not loading, and you start refrehing the app, still nothing happens... How do you check what's wrong?
+This is where log monitoring comes into the picture!
+
+- **Monolith Application** = traditional application, everything/all code is in one place. Everything is tightly coupled.
+- **Microservice Application** = loosely coupled modules, hosted separately
+
+
+Analysing logs is really time consuming!
+Alert Fatigue for Application teams (SREs and DevOps) = due to the sheer volume of logs. They have to find a needle in a truckload of logs, and often they are not aware of the application flow.
+
+
+**Why Observability**
+- Possibly reduces _Alert Fatigue_ for Security Ops teams
+- reduces cost in resolving same issue again and again
+- visibility to end-to-end logs, metrics and tracing
+- is at looking at the picture as a whole, thus increasing collaboration between teams
+- can be as simple as checking the application health
+
+**Observability v/s Monitoring**
+
+![obs_vs_monitoring](assets/week2_security_notes.png)
+
+Monitoring
+eg: some monitoring script/tool that will refresh the app every 5 seconds to check health
+- can be difficult for large complex apps, where multiple components/ systems are connected to each other. It gets difficult to track which part you are dependent on, which part has an issue etc.
+
+Observability
+- visibility on entire lifecycle of a service
+- the way you would break down the entire application into processes and have a trace of exactly where the function is calling, where it is traversing the data, where its going for logging, what metric is being used.
+
+**Three Pillars of Observability**
+1. Metrics
+2. Traces
+3. Logs
+
+**Metrics**
+- a way to enhance the logs being produced
+- eg: how often does a certain issue happens, why does it happen etc.
+
+**Trace**
+- being able to trace and pin-point to the cause of something
+-
+
+**AWS Observability Services**
+1. AWS CloudWatch Logs
+2. AWS CloudWatch Metrics
+3. AWS X-ray Traces
+
+**Observability Instrumentation**
+
+_Instrumentation_ helps create or proceduce logs, metrics and traces; usually **CloudWatch agent, X-ray agent or AWS distribution for OpenTelemetry**
+
+![cloudwatch_obs](assets/week2_aws_observability.png)
+
+**Amazon Detective**
+- a service that helps you identify security issues and investigate them
+- supported by other AWS services in the backend, like - Amazon Macie (for sensitive data scanning in S3 buckets), Amazon GuardDuty(threat detection, continuous monitoring), Amazon Inspector, AWS Securty Hub(manage compliance and security) etc.
+
+
+
