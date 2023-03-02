@@ -8,9 +8,11 @@
 4. Instrument Honeycomb with [OTEL](https://www.youtube.com/watch?v=2GD9xCzRId4&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=30) ✅
 5. Instrument AWS [X-Ray](https://www.youtube.com/watch?v=n2DTsuBrD_A&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=32) ✅
 6. Configure custom logger to send to CloudWatch [Logs](https://www.youtube.com/watch?v=ipdFizZjOF4&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=33) ✅
-7. Integrate Rollbar and capture and [error](https://www.youtube.com/watch?v=xMBDAb5SEU4&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=35)
+7. Integrate Rollbar and capture and [error](https://www.youtube.com/watch?v=xMBDAb5SEU4&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=35) ✅
 8. Submit Security quiz ✅
 9. Submit Spend considerations quiz 
+10. X-ray sub-segment instrumentation
+11. Configure Git Codespaces and get it to run
 
 ====================================================================================
 
@@ -387,74 +389,8 @@ And both our Spans return data to our Trace! Hooray!!
 
 
 
-=========================================================
-## Week 2 - Security considerations
-[Ashish's Observability vs Monitoring Explained in AWS](https://www.youtube.com/watch?v=bOf4ITxAcXc&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=32)
-
-#### All about Logging!
-
-Suppose you have a traditional application, say running on your laptopp. If something goes wrong and the application is not loading, and you start refrehing the app, still nothing happens... How do you check what's wrong?
-This is where log monitoring comes into the picture!
-
-- **Monolith Application** = traditional application, everything/all code is in one place. Everything is tightly coupled.
-- **Microservice Application** = loosely coupled modules, hosted separately
-
-
-Analysing logs is really time consuming!
-Alert Fatigue for Application teams (SREs and DevOps) = due to the sheer volume of logs. They have to find a needle in a truckload of logs, and often they are not aware of the application flow.
-
-
-**Why Observability**
-- Possibly reduces _Alert Fatigue_ for Security Ops teams
-- reduces cost in resolving same issue again and again
-- visibility to end-to-end logs, metrics and tracing
-- is at looking at the picture as a whole, thus increasing collaboration between teams
-- can be as simple as checking the application health
-
-**Observability v/s Monitoring**
-
-![obs_vs_monitoring](assets/week2_security_notes.png)
-
-Monitoring
-eg: some monitoring script/tool that will refresh the app every 5 seconds to check health
-- can be difficult for large complex apps, where multiple components/ systems are connected to each other. It gets difficult to track which part you are dependent on, which part has an issue etc.
-
-Observability
-- visibility on entire lifecycle of a service
-- the way you would break down the entire application into processes and have a trace of exactly where the function is calling, where it is traversing the data, where its going for logging, what metric is being used.
-
-**Three Pillars of Observability**
-1. Metrics
-2. Traces
-3. Logs
-
-**Metrics**
-- a way to enhance the logs being produced
-- eg: how often does a certain issue happens, why does it happen etc.
-
-**Trace**
-- being able to trace and pin-point to the cause of something
--
-
-**AWS Observability Services**
-1. AWS CloudWatch Logs
-2. AWS CloudWatch Metrics
-3. AWS X-ray Traces
-
-**Observability Instrumentation**
-
-_Instrumentation_ helps create or proceduce logs, metrics and traces; usually **CloudWatch agent, X-ray agent or AWS distribution for OpenTelemetry**
-
-![cloudwatch_obs](assets/week2_aws_observability.png)
-
-**Amazon Detective**
-- a service that helps you identify security issues and investigate them
-- supported by other AWS services in the backend, like - Amazon Macie (for sensitive data scanning in S3 buckets), Amazon GuardDuty(threat detection, continuous monitoring), Amazon Inspector, AWS Securty Hub(manage compliance and security) etc.
-
-
-
-
 ====================================================================================
+
 
 ## Configuring X-Ray!
 
@@ -746,5 +682,180 @@ Verify the presence of cloudwatch logs in your AWS account's management console.
 
 
 ====================================================================================
+
+## Integrate Rollbar and capture an error
+
+Before proceeding further, ensure that you have a [Rollbar](https://app.rollbar.com/a/aggarwal.tanushree/projects) account.
+Create a Rollbar project named `cruddur`
+
+![rollbar_project](assets/week2_rollbar_project.png)
+
+
+1. Add the Python library required for Rollerbar to our `requirements.txt`
+
+```txt
+blinker
+rollbar
+```
+
+2. To send errors to Rollbar from your Python application you should use the pyrollbar package. Let's install pyrollbar with pip
+
+```sh
+cd backend-flask
+pip install -r requirements.txt
+cd ..
+```
+
+![rollbar_requirements](assets/week2_rollbar_requirements.png)
+
+
+3. Add your Rollbar access token to your GitPod environment
+
+
+export ROLLBAR_ACCESS_TOKEN="43d3b40fd183430caf92b478bf6cb76f"
+gp env ROLLBAR_ACCESS_TOKEN="43d3b40fd183430caf92b478bf6cb76f"
+
+
+```sh
+export ROLLBAR_ACCESS_TOKEN="4xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+gp env ROLLBAR_ACCESS_TOKEN="4xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+```
+
+Verify that the env var is set `env|grep ROLLBAR`
+
+Next, add this access token to `docker-compose.yml` under backend env vars:
+
+```yml
+ROLLBAR_ACCESS_TOKEN: "${ROLLBAR_ACCESS_TOKEN}"
+```
+
+![rollbar_env_vars](assets/week2_rollbar_envvars.png)
+
+4. Let's instrument Rollbar! Add to `backend-flask/app.py` :
+
+Import libraries:
+```py
+# Rollbar ------
+from time import strftime
+import os
+import rollbar
+import rollbar.contrib.flask
+from flask import got_request_exception
+```
+
+```py
+# Rollbar ----------
+rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
+@app.before_first_request
+def init_rollbar():
+    """init rollbar module"""
+    rollbar.init(
+        # access token
+        rollbar_access_token,
+        # environment name
+        'production',
+        # server root directory, makes tracebacks prettier
+        root=os.path.dirname(os.path.realpath(__file__)),
+        # flask already sets up logging
+        allow_logging_basic_config=False)
+
+    # send exceptions from `app` to rollbar, using flask's signal system.
+    got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
+```
+
+Also add a test endpoint so it returns an messages to Rollbar
+
+```py
+@app.route('/rollbar/test')
+def rollbar_test():
+    rollbar.report_message('Hello World!', 'warning')
+    return "Hello World!"
+
+```
+
+5. `Compose up` the `docker-compose.yml` file, and check the `Ports` tab - Frontend and Backend should be running.
+In case of issues, check the docker logs using the Docker extension -> view logs
+
+Hit thebackend `/api/activities/home` endpoint and `/rollbar/test` endpoint to generate traffic.
+
+Check if this traffic reached our Rollbar project
+
+
+You did it! Rollbar works!
+
+![rollbar_composed](assets/week2_rollbar_run.png)
+
+![rollbar_project](assets/week2_rollbar_data.png)
+
+![rollbar_project_items](assets/week2_rollbar_data2.png)
+
+====================================================================================
+
+## Week 2 - Security considerations
+[Ashish's Observability vs Monitoring Explained in AWS](https://www.youtube.com/watch?v=bOf4ITxAcXc&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=32)
+
+#### All about Logging!
+
+Suppose you have a traditional application, say running on your laptopp. If something goes wrong and the application is not loading, and you start refrehing the app, still nothing happens... How do you check what's wrong?
+This is where log monitoring comes into the picture!
+
+- **Monolith Application** = traditional application, everything/all code is in one place. Everything is tightly coupled.
+- **Microservice Application** = loosely coupled modules, hosted separately
+
+
+Analysing logs is really time consuming!
+Alert Fatigue for Application teams (SREs and DevOps) = due to the sheer volume of logs. They have to find a needle in a truckload of logs, and often they are not aware of the application flow.
+
+
+**Why Observability**
+- Possibly reduces _Alert Fatigue_ for Security Ops teams
+- reduces cost in resolving same issue again and again
+- visibility to end-to-end logs, metrics and tracing
+- is at looking at the picture as a whole, thus increasing collaboration between teams
+- can be as simple as checking the application health
+
+**Observability v/s Monitoring**
+
+![obs_vs_monitoring](assets/week2_security_notes.png)
+
+Monitoring
+eg: some monitoring script/tool that will refresh the app every 5 seconds to check health
+- can be difficult for large complex apps, where multiple components/ systems are connected to each other. It gets difficult to track which part you are dependent on, which part has an issue etc.
+
+Observability
+- visibility on entire lifecycle of a service
+- the way you would break down the entire application into processes and have a trace of exactly where the function is calling, where it is traversing the data, where its going for logging, what metric is being used.
+
+**Three Pillars of Observability**
+1. Metrics
+2. Traces
+3. Logs
+
+**Metrics**
+- a way to enhance the logs being produced
+- eg: how often does a certain issue happens, why does it happen etc.
+
+**Trace**
+- being able to trace and pin-point to the cause of something
+-
+
+**AWS Observability Services**
+1. AWS CloudWatch Logs
+2. AWS CloudWatch Metrics
+3. AWS X-ray Traces
+
+**Observability Instrumentation**
+
+_Instrumentation_ helps create or proceduce logs, metrics and traces; usually **CloudWatch agent, X-ray agent or AWS distribution for OpenTelemetry**
+
+![cloudwatch_obs](assets/week2_aws_observability.png)
+
+**Amazon Detective**
+- a service that helps you identify security issues and investigate them
+- supported by other AWS services in the backend, like - Amazon Macie (for sensitive data scanning in S3 buckets), Amazon GuardDuty(threat detection, continuous monitoring), Amazon Inspector, AWS Securty Hub(manage compliance and security) etc.
+
+
+
+
 ====================================================================================
 ====================================================================================
