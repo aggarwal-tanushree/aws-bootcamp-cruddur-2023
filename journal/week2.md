@@ -6,8 +6,8 @@
 2. Watch Chirag Week 2 - Spending Considerations
 3. Watched Ashish's Week 2 - Observability Security Considerations [video](https://www.youtube.com/watch?v=bOf4ITxAcXc&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=31) ✅
 4. Instrument Honeycomb with [OTEL](https://www.youtube.com/watch?v=2GD9xCzRId4&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=30) ✅
-5. Instrument AWS [X-Ray](https://www.youtube.com/watch?v=n2DTsuBrD_A&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=32)
-6. Configure custom logger to send to CloudWatch [Logs](https://www.youtube.com/watch?v=ipdFizZjOF4&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=33)
+5. Instrument AWS [X-Ray](https://www.youtube.com/watch?v=n2DTsuBrD_A&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=32) ✅
+6. Configure custom logger to send to CloudWatch [Logs](https://www.youtube.com/watch?v=ipdFizZjOF4&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=33) ✅
 7. Integrate Rollbar and capture and [error](https://www.youtube.com/watch?v=xMBDAb5SEU4&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=35)
 8. Submit Security quiz ✅
 9. Submit Spend considerations quiz 
@@ -453,3 +453,298 @@ _Instrumentation_ helps create or proceduce logs, metrics and traces; usually **
 
 
 
+
+====================================================================================
+
+## Configuring X-Ray!
+
+**X-RAY**
+
+- X-ray is easy to configure with AWS services like Elastic Beanstalk and Amazon Lambda
+- With ECS -  not so much!
+
+Let's start quest!
+
+
+**X-Ray - Daemon**  
+ - another container/app that runs alongside your applications
+	- It collects it, batches it
+	- and sends to X-Ray API
+so the data can be visualized in X-Ray Console
+
+![xray](assets/week2_xray_flow.png]
+
+
+1. Update _gitpod.yml_ to include a `npm` installation for our fronend, so that we do not have to manually install npm every time
+
+```yml_
+  - name: react-js
+    command: |
+      cd frontend-react-js
+      npm i
+```
+
+
+2. The updated `gitpod.yml` will take effect the next time our Gitpod environment is re-loaded, so one last time manually install npm for the frontend-react-js
+
+```sh
+cd frontend-react-js
+npm i
+cd ..
+```
+
+![update_gitpod_yml](assets/week2_gitpodyml_npm.png)
+
+
+3. Let's install the X-Ray SDK. We can refer the AWS [documentation](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-python.html) for reference.
+Add the below line to [backend-flask/requirements.txt](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/f268fe3f2c6d030afbc83b998b8c1615a61cac9b/backend-flask/requirements.txt)
+
+`aws-xray-sdk`
+
+4. Next we install the Python dependencies
+On the terminal type:
+
+```py
+cd backend-flask
+pip install -r requirements.txt
+cd ..
+```
+
+![xray_requirements](assets/week2_xray_requirements.png)
+
+
+5. Import the x-ray libraries to `app.py`
+
+```py
+# X-RAY ----------
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
+```
+
+6. To start the X-ray middleware recorder, add the following code to your `app.py`
+
+```py
+# X-RAY ----------
+xray_url = os.getenv("AWS_XRAY_URL")
+xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
+```
+
+The XRayMiddleware middleware function call goes below  `app= Flask(_name_)` in `app.py`
+
+# X-RAY ----------
+XRayMiddleware(app, xray_recorder)
+
+
+7. Next up, we will create a X-ray group. Groups are used to group Traces together
+On your terminal
+```sh
+aws xray create-group \
+   --group-name "Cruddur" \
+   --filter-expression "service(\"backend-flask\")"
+
+```
+
+![create_xray_group](assets/week2_create_xray_group.png)
+
+
+8. To set the X-ray sampling rules resources, let's create a new json [file]()  `aws/json/xray.json`
+
+```json
+{
+  "SamplingRule": {
+      "RuleName": "Cruddur",
+      "ResourceARN": "*",
+      "Priority": 9000,
+      "FixedRate": 0.1,
+      "ReservoirSize": 5,
+      "ServiceName": "backend-flask",
+      "ServiceType": "*",
+      "Host": "*",
+      "HTTPMethod": "*",
+      "URLPath": "*",
+      "Version": 1
+  }
+}
+```
+
+9. After this we create a sampling rules. Sampling determines how much information we want to see, when we create an application. We do not necessarily want to collect every single data point, because it can get expensive.
+At the terminal, execute the below command:
+
+`aws xray create-sampling-rule --cli-input-json file://aws/json/xray.json`
+
+![xray_json](assets/week2_xray_json.png)
+
+
+10. Good job keeping up so far. We now proceed to create our X-Ray Daemon Docker Container using the corresponding Docker [image](https://hub.docker.com/r/amazon/aws-xray-daemon). 
+For this add this code to your `docker-compose.yml` file
+
+```yml
+ xray-daemon:
+    image: "amazon/aws-xray-daemon"
+    environment:
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      AWS_REGION: "eu-central-1"
+    command:
+      - "xray -o -b xray-daemon:2000"
+    ports:
+      - 2000:2000/udp
+```
+
+Also add the below mentioned environment variables to the `backend-flask` env vars section of `docker-compose.yml`
+
+```yml
+      AWS_XRAY_URL: "*4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}*"
+      AWS_XRAY_DAEMON_ADDRESS: "xray-daemon:2000"
+```
+
+
+
+
+11. Let's attempt running our code. 
+`Compose up` the `docker-compose.yml` file, and check the `Ports` tab - Frontend, Backend and X-Ray should be running.
+In case of issues, check the docker logs using the Docker extension -> view logs
+
+Check the X-Ray container logs to see if it is able to send data to our X-Ray Trace.
+Verify the same in `AWS X-Ray` console in the AWS management console.
+
+![xray-running](assets/week2_xray_running.png)
+
+![xray_traces](assets/week2_xray_traces.png)
+
+![xray_segment](assets/week2_xray_segment.png)
+
+
+12. Now that we have been able to get our X-ray trace running, let's create a segment. 
+We will be doing this for for our `User Activities` API.
+
+Add the below code to [backend-flask/services/user_activities.py](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/f268fe3f2c6d030afbc83b998b8c1615a61cac9b/backend-flask/services/user_activities.py)
+
+Import X-Ray recorder
+```py
+from aws_xray_sdk.core import xray_recorder
+```
+
+Inside the run definition
+```py
+# xray ---
+    segment = xray_recorder.begin_segment('user_activities')
+```
+
+We can also create a sub-segment using the below code
+
+```py
+    subsegment = xray_recorder.begin_subsegment('mock-data')
+    # xray ---
+    dict = {
+      "now": now.isoformat(),
+      "results-size": len(model['data'])
+    }
+    subsegment.put_metadata('key', dict, 'namespace')
+```
+
+====================================================================================
+
+
+## Configure custom logger to send to CloudWatch Logs
+
+1. Add the Python [library](https://pypi.org/project/watchtower/) required for CloudWatch to our `requirements.txt`
+`watchtower`
+
+2. Install the Python library
+```sh
+cd backend-flask
+pip install -r requirements.txt
+cd ..
+```
+
+![cloudwatch_libs](assets/week2_cloudwatch_libs.png)
+	
+3. Let's configure Cloudwatch in our `app.py`
+Add the imports
+
+```py
+# CloudWatch Logs ----
+import watchtower
+import logging
+from time import strftime
+```
+
+Configure the logger for CloudWatch in our `app.py`
+
+```py
+# Configuring Logger to Use CloudWatch
+LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(logging.DEBUG)
+console_handler = logging.StreamHandler()
+cw_handler = watchtower.CloudWatchLogHandler(log_group='cruddur')
+LOGGER.addHandler(console_handler)
+LOGGER.addHandler(cw_handler)
+LOGGER.info("test log")
+```
+
+```py
+# Configuring CloudWatch
+@app.after_request
+def after_request(response):
+    timestamp = strftime('[%Y-%b-%d %H:%M]')
+    LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+    return response
+```
+
+Update the existing piece of code
+
+```py
+@app.route("/api/activities/home", methods=['GET'])
+def data_home():
+  data = HomeActivities.run()
+  return data, 200
+```
+
+To:
+
+```py
+@app.route("/api/activities/home", methods=['GET'])
+def data_home():
+  data = HomeActivities.run(logger=LOGGER)
+  return data, 200
+```  
+ 
+
+4. Configure logging for `Home Activities` API as well
+Add the foolowing code to home_activities.py
+Update run() definiton to:
+
+```py
+	def run(logger)
+```
+
+```py
+    logger.info("HomeActivities")
+
+```
+
+5. Add the required environment variables to `docker-compose.yml` under `backed-flask` service
+
+```yml
+
+      AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+```
+
+6. `Compose up` the `docker-compose.yml` file, and check the `Ports` tab - Frontend and Backend should be running.
+In case of issues, check the docker logs using the Docker extension -> view logs
+
+hit the backend `/api/activities/home` endpoint a few time to generate traffic.
+Verify the presence of cloudwatch logs in your AWS account's management console.
+
+
+![cloudwatch](assets/week2_cloudwatch_logs.png)
+
+![Cloudwatch_verification](assets/week2_cloudwatch_logs2.png)
+
+
+====================================================================================
+====================================================================================
+====================================================================================
