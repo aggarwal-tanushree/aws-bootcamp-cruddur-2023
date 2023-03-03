@@ -10,8 +10,8 @@
 6. Configure custom logger to send to CloudWatch [Logs](https://www.youtube.com/watch?v=ipdFizZjOF4&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=33) ✅
 7. Integrate Rollbar and capture and [error](https://www.youtube.com/watch?v=xMBDAb5SEU4&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=35) ✅
 8. Submit Security quiz ✅
-9. Submit Spend considerations quiz 
-10. X-ray sub-segment instrumentation
+9. Submit Spend considerations quiz ✅
+10. X-ray sub-segment instrumentation ✅
 11. Configure Git Codespaces and get it to run ✅
 
 ====================================================================================
@@ -26,17 +26,26 @@
 | 4 	| Configure custom logged with Cloudwatch  	|  [journal](#configure-custom-logger-to-send-to-cloudwatch-logs) 	|
 | 5     | Configure GitHub Codespaces |  [journal](#configure-codespaces) |
 | 6	| Spend Considerations | [journal](#week-2-spend-considerations) |
-| 7	| Security Considerations | [journal](#week-2-security-considerations)
+| 7	| Security Considerations | [journal](#week-2-security-considerations) |
+| 8	| Instrument X-Ray sub-segment | [journal](#x-ray-subsegment-configuration) |
+
+====================================================================================
+
+## Stretch Assignments
+I tried my best to get the X-ray sub-segment to work but was unable to do so on my own. 
+Was only able to get it working post reading Olga's blog and watching AB's video.
 
 ====================================================================================
 
 ## Personal Milestones  👯
-1.
-
+I still can't belive that I managed to get everything completed this week! Everything is up and running before the next session ! It was quite a challenging week.
+I made mistakes and learnt from them throughout the week.
+My troubleshooting skills (and confidence in myself) has exponentially! 
+I can't thank Andrew enough for this bootcamp!
 
 ====================================================================================
 
-## Issues faced 😰 :x: warning: :no_entry:
+## Issues faced 😰 :x: :warning: :no_entry:
 
 [Docker image not found for my backend code](#error-backend-image-not-found)
 
@@ -395,6 +404,7 @@ And both our Spans return data to our Trace! Hooray!!
 ![honeycomb_trace](assets/week2_honeycomb_working.png)
 
 
+Commit and Sync the code to Github repo
 
 
 ====================================================================================
@@ -543,8 +553,6 @@ Also add the below mentioned environment variables to the `backend-flask` env va
 ```
 
 
-
-
 11. Let's attempt running our code. 
 `Compose up` the `docker-compose.yml` file, and check the `Ports` tab - Frontend, Backend and X-Ray should be running.
 In case of issues, check the docker logs using the Docker extension -> view logs
@@ -558,6 +566,7 @@ Verify the same in `AWS X-Ray` console in the AWS management console.
 
 ![xray_segment](assets/week2_xray_segment.png)
 
+#### X-Ray Subsegment configuration
 
 12. Now that we have been able to get our X-ray trace running, let's create a segment. 
 We will be doing this for for our `User Activities` API.
@@ -569,23 +578,79 @@ Import X-Ray recorder
 from aws_xray_sdk.core import xray_recorder
 ```
 
-Inside the run definition
+Inside the run definition:
+Add a `try` block
 ```py
-# xray ---
-    segment = xray_recorder.begin_segment('user_activities')
+def run(user_handle):
+    try:
+      model = {
+        'errors': None,
+        'data': None
+      }
 ```
 
-We can also create a sub-segment using the below code
+We can also create a sub-segment using the below code.
+Before the `return` statement, add the following code:
 
 ```py
-    subsegment = xray_recorder.begin_subsegment('mock-data')
-    # xray ---
-    dict = {
-      "now": now.isoformat(),
-      "results-size": len(model['data'])
-    }
-    subsegment.put_metadata('key', dict, 'namespace')
+      subsegment = xray_recorder.begin_subsegment('mock-data')
+      # xray ---
+      dict = {
+        "now": now.isoformat(),
+        "results-size": len(model['data'])
+      }
+      subsegment.put_metadata('key', dict, 'namespace')
+      xray_recorder.end_subsegment()
+    finally:  
+    #  # Close the segment
+      xray_recorder.end_subsegment()
 ```
+
+13. Update `backend-flask/app.py` 
+
+Add an X-ray recorder to the API endpoints you want to be traced by X-Raydaemon
+
+```py
+@app.route("/api/activities/home", methods=['GET'])
+##X-Ray recorder
+@xray_recorder.capture('activities_home')
+def data_home():
+  data = HomeActivities.run()
+  return data, 200
+```  
+```
+@app.route("/api/activities/@<string:handle>", methods=['GET'])
+##X-Ray recorder
+@xray_recorder.capture('activities_users')
+def data_handle(handle):
+  model = UserActivities.run(handle)
+  if model['errors'] is not None:
+    return model['errors'], 422
+  else:
+    return model['data'], 200
+```
+
+```py
+@app.route("/api/activities/<string:activity_uuid>", methods=['GET'])
+# X-Ray recorder
+@xray_recorder.capture('activities_show')
+def data_show_activity(activity_uuid):
+  data = ShowActivity.run(activity_uuid=activity_uuid)
+  return data, 200
+```
+
+14. `Compose up` the `docker-compose.yml` file, and check the `Ports` tab - Frontend and Backend should be running.
+In case of issues, check the docker logs using the Docker extension -> view logs
+
+Hit the backend `/api/activities/home` endpoint and also a user endpoint a few time to generate traffic.
+Check your X-Ray Trace in the AWS Management Console for new sub-segment data.
+
+It works!
+
+![xray_subsegment_trace](assets/week2_xray_subsegment.png)
+
+
+15. Commit and Sync the code to Github repo
 
 ====================================================================================
 
@@ -688,6 +753,8 @@ Verify the presence of cloudwatch logs in your AWS account's management console.
 
 ![Cloudwatch_verification](assets/week2_cloudwatch_logs2.png)
 
+
+7. Commit and Sync the code to Github repo
 
 ====================================================================================
 
@@ -796,6 +863,8 @@ You did it! Rollbar works!
 ![rollbar_project](assets/week2_rollbar_data.png)
 
 ![rollbar_project_items](assets/week2_rollbar_data2.png)
+
+6. Commit and Sync the code to Github repo
 
 ====================================================================================
 
