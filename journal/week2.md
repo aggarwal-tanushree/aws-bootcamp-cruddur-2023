@@ -12,21 +12,27 @@
 8. Submit Security quiz ✅
 9. Submit Spend considerations quiz 
 10. X-ray sub-segment instrumentation
-11. Configure Git Codespaces and get it to run
+11. Configure Git Codespaces and get it to run ✅
+
+====================================================================================
+
+## Week 2 Assignment Proof
+
+| 	| Topic	| Assignment Proof 	|
+|---	|--------------------------------	|--------------------------------------------	|
+| 1 	| Instrument Honeycomb with OTEL 	| [journal](#configuring-a-honeycomb-trace) 	|
+| 2 	| Instrument X-Ray                	|  [journal](#configuring-x-ray)              	|
+| 3 	| Instrument Rollbar                |  [journal](#integrate-rollbar-and-capture-an-error)  |
+| 4 	| Configure custom logged with Cloudwatch  	|  [journal](#configure-custom-logger-to-send-to-cloudwatch-logs) 	|
+| 5     | Configure GitHub Codespaces |  [journal](#configure-codespaces) |
+| 6	| Spend Considerations | [journal](#week-2-spend-considerations) |
+| 7	| Security Considerations | [journal](#week-2-security-considerations)
 
 ====================================================================================
 
 ## Personal Milestones  👯
 1.
 
-====================================================================================
-
-## Week 2 assignment proof
-
-
-**Note** : I have documented each of these tasks in great detail [here](#detailed-documentation)
-
-[Ashish's security considerations](#security-considerations)
 
 ====================================================================================
 
@@ -384,7 +390,9 @@ Let's hit our backend URL and few times, and then make our way to the HoneyComb 
 ![week2_adding_span_trace](assets/week2_adding_span.png)
 
 And both our Spans return data to our Trace! Hooray!!
-![honeycomb_returning_data](assets/week2_honeycomb_span_output.png]
+![honeycomb_returning_data](assets/week2_honeycomb_span_output.png)
+
+![honeycomb_trace](assets/week2_honeycomb_working.png)
 
 
 
@@ -915,7 +923,7 @@ Command Palette -> Stop current codespace
 
 ====================================================================================
 
-## Week 2 - Security considerations
+## Week 2 Security considerations
 [Ashish's Observability vs Monitoring Explained in AWS](https://www.youtube.com/watch?v=bOf4ITxAcXc&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=32)
 
 #### All about Logging!
