@@ -791,6 +791,130 @@ You did it! Rollbar works!
 
 ====================================================================================
 
+
+## Configure Codespaces
+
+1. In your Github repository, click the `Code` button and create a `new Codespace from main branch`
+This will open a new Github Codespace in a new tab.
+
+![github_codespace](assets/week2_codespace.png)
+
+2. We will now configure our codespace workspace
+2.1 click the small `settings` button at the botton left of the screen, and select `command palette` (alternately use the shortcut `Ctrl+Shift+P`
+2.2 on the palette search, start typing `devcontainer`, select the option `Codespaces: Add Dev Container Configuration Files ..`
+2.3 Select `Create a new configuration.. `
+2.4 Select `From: docker-compose.yml`
+2.5 Select `backend-flask`
+2.6 This will open a new file named `devcontainer.json` based on the backend-flask configration in our `docker-compose.yml` file
+
+![open_dev_container_file](assets/week2_devcontainer.png)
+
+3. Let's edit this file and add our desired configuration
+3.1 We add the required extensions (on the extensions tab, search the desired extension names, click and `add to devcontainer configuration`
+We need the following extensions: AWS CLI, Docker and Python. Comment out and disable the other properties in the file.
+
+```json
+{
+	"name": "Cruddur Configuration",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/devcontainers/features/aws-cli:1": {}
+	},
+	"remoteEnv": {
+		"AWS_CLI_AUTO_PROMPT": "on-partial"
+	},	
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-azuretools.vscode-docker",
+				"ms-python.python"
+			],
+			"settings": {
+				"terminal.integrated.fontSize": 16,
+				"editor.fontSize": 16,
+				"workbench.colorTheme": "Default Dark+ Experimental"
+			}
+		}
+		
+
+
+	}
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Configure tool-specific properties.
+	// "customizations": {},
+
+	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "devcontainer"
+}
+```
+
+3.2 In order for this configuration to take effect, we need to reload our codespace environment.
+Command Palette -> `Codespaces: Full Rebuild Container`
+_Note: this will take upto 5 minutes to rebuild_
+
+![rebuild_codespace](assets/week2_rebuild_codespace.png)
+
+
+3.3 After the workspace has been rebuild, verify that the required extensions `AWS CLI, Python and Docker` have been installed.
+
+3.4 Next, we need to configure our AWS credentials in our codespace.
+Command Palette -> Secrets Manager -> Manage on Github.com
+
+![configure_aws](assets/week2_add_credentials.png)
+
+3.4 In the [Github UI for Codespaces](https://github.com/settings/codespaces), add a `New Secret` named `AWS_ACCESS_KEY_ID`, and associate it with your `bootcamp github repository`.
+Repeat for `AWS_SECRET_ACCESS_KEY` and `AWS_DEFAULT_REGION`
+
+![configured_aws_creds](assets/week2_configure_credentials.png)
+
+3.5 Reload the codespace environment for these new secrets to be applied.
+Verify that the env vars have been loaded by executing `env|grep AWS`
+
+
+4. Update the `docker-compose.yml` with the FRONTEND and BACKEND URLs for Github codespaces (comment out the GitPod ones while doing so)
+
+```yml
+	backend-flask:
+	 environment:
+	  #FRONTEND_URL: "https://3000-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+	  #BACKEND_URL: "https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+	  FRONTEND_URL: "https://${CODESPACE_NAME}-3000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"
+	  BACKEND_URL: "https://${CODESPACE_NAME}-4567.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"
+	  
+	frontend-react-js:
+	 environment:  
+	  #REACT_APP_BACKEND_URL: "https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+	  REACT_APP_BACKEND_URL: "https://${CODESPACE_NAME}-4567.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"
+```
+
+5. Run the app to see if it works.
+```sh
+cd frontend-react-js
+npm i
+cd ..
+```
+
+`Compose up` the `docker-compose.yml` file and check if the application is working
+_Note: Set the backend port to public_
+
+
+![app_working](assets/week2_app_working1.png)
+
+![app_working](assets/week2_app_working2.png)
+
+
+6. Commit the changes to github and stop the codespace.
+
+Command Palette -> Stop current codespace
+
+![stop_codespace](assets/week2_stop_codespace.png)
+
+
+====================================================================================
+
 ## Week 2 - Security considerations
 [Ashish's Observability vs Monitoring Explained in AWS](https://www.youtube.com/watch?v=bOf4ITxAcXc&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=32)
 
@@ -858,4 +982,37 @@ _Instrumentation_ helps create or proceduce logs, metrics and traces; usually **
 
 
 ====================================================================================
+
+## Week 2 Spend Considerations
+
+[Spend Considerations](https://www.youtube.com/watch?v=2W3KeqCjtDY)
+
+**HoneyComb**
+- 20million monthly events free - free tier
+
+[HoneyComb Pricing](https://www.honeycomb.io/pricing)
+
+![honeycomb_pricing](assets/week2_honeycomb_pricing.png)
+
+**Rollbar**
+- 5k error events per months - free tier
+- data retention is 30 days - free tier
+
+[Rollbar Pricing details](https://rollbar.com/pricing/)
+
+![rollbar_pricing](assets/week2_rollbar_pricing.png)
+
+
+**AWS X-Ray** - analyze and debug apps
+- free tier duration = always free
+- 100,000 trace records per monthly
+- 1000,000 traces scanned or retrieved per month.
+
+
+**CloudWatch** - for monitoring cloud resources and apps
+- Free tier = always free
+- 10 custom metrics and alarms - free  tier
+- 5GB Log data Ingestion and 5GB log data archival
+
+
 ====================================================================================
