@@ -4,16 +4,16 @@
 
 ## Task status
 1. Watch Week 3 Live-Stream [Video](https://www.youtube.com/watch?v=9obl7rVgzJw&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=41) ✅
-2. Watch Chirag Week 3 - Spending Considerations
-3. Watched Ashish's Week 3 - Decentralized authentication Security Considerations [video](https://www.youtube.com/watch?v=tEJIeII66pY&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=39)
-4. Setup Cognito User Pool
-5. Implement Custom Signin Page
-6. Implement Custom Signup Page
-7. Implement Custom Confirmation Page
-8. Implement Custom Recovery Page
-9. Watch about different approaches to verifying JWTs [video](https://www.youtube.com/watch?v=nJjbI4BbasU&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=43)
-10. Submit Security quiz 
-11. Submit Spend considerations quiz 
+2. Watch Chirag Week 3 - Spending Considerations :x: (not uploaded)
+3. Watched Ashish's Week 3 - Decentralized authentication Security Considerations [video](https://www.youtube.com/watch?v=tEJIeII66pY&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=39) ✅
+4. Setup Cognito User Pool ✅
+5. Implement Custom Signin Page ✅
+6. Implement Custom Signup Page ✅
+7. Implement Custom Confirmation Page ✅
+8. Implement Custom Recovery Page ✅
+9. Watch about different approaches to verifying JWTs [video](https://www.youtube.com/watch?v=nJjbI4BbasU&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=43) - Pending
+10. Submit Security quiz :x: (not uploaded)
+11. Submit Spend considerations quiz :x: (not uploaded)
 
 ====================================================================================
 
@@ -23,9 +23,9 @@
 |---	|--------------------------------	|--------------------------------------------	|
 | 1 	| Setup Cognito User Pool 	| [journal](#setup-cognito-user-pool) 	|
 | 2 	| Implement Custom Signin Page                	|  [journal](#implement-custom-signin-page)              	|
-| 3 	| Implement Custom Signup Page                |  [journal](#integrate-rollbar-and-capture-an-error)  |
-| 4 	| Implement Custom Confirmation Page  	|  [journal](#configure-custom-logger-to-send-to-cloudwatch-logs) 	|
-| 5     | Implement Custom Recovery Page |  [journal](#configure-codespaces) |
+| 3 	| Implement Custom Signup Page                |  [journal](#implement-custom-signup-page)  |
+| 4 	| Implement Custom Confirmation Page  	|  [journal](#implement-custom-confirmation-page) 	|
+| 5     | Implement Custom Recovery Page |  [journal](#implement-custom-recovery-page) |
 | 6	| Spend Considerations | [journal](#week-3-spend-considerations) |
 | 7	| Security Considerations | [journal](#week-3-security-considerations) |
 
@@ -33,7 +33,7 @@
 ====================================================================================
 
 ## Stretch Assignments
-
+- none so far
 ====================================================================================
 
 ## Personal Milestones  👯
@@ -54,7 +54,7 @@
 - From the Hanmurger icon, navigate to `Cognito`
 - Click `Create user pool`
 	- Select `Cognito user pool`
-	-  For the "Cognito user pool sign-in options" select `User name` and `Email` and click `Next`
+	-  For the "Cognito user pool sign-in options" select `Email` and click `Next`
 	
 	![cognito_pool_creation](assets/week3_cognito_user_pool_creation_1.png)
 	
@@ -149,8 +149,8 @@ Amplify.configure({
 	
 REACT_APP_AWS_PROJECT_REGION: "${AWS_DEFAULT_REGION}"
 REACT_APP_AWS_COGNITO_REGION: "${AWS_DEFAULT_REGION}"
-REACT_APP_AWS_USER_POOLS_ID: "eu-central-1_jXJqoM8dU"
-REACT_APP_CLIENT_ID: "16fa2s1rk5v77hs6c6cn8men6i"
+REACT_APP_AWS_USER_POOLS_ID: "eu-central-1_xxxxxxx"
+REACT_APP_CLIENT_ID: "xxxxxxxxxxxxx"
 
 _Note: to get the REACT_APP_CLIENT_ID follow these steps:_
 
@@ -329,6 +329,251 @@ Now try to sign-in with the correct credentials (the user we created in our Cogn
 Something is not right! We will need to troubleshoot this issue.
 
 
+5.5 At the terminal execute the below command to make the password permanent.
+This is a workaround, since our user was created with a temporary password.
+`aws cognito-idp admin-set-user-password --username xxxxxxxxxxxxxxxxxxxxx@gmail.com --password xxxxxxxxxxx --user-pool-id eu-central-1-xxxxxx --permanent`
+
+![login](assets/week3_user.png)
+
+Now try logging in with the defined username and password.
+
+![login](assets/week3_user_login.png)
+
+
+
+Try the `sign out` feature to check its working as expected.
+
+![sign_out](assets/week3_user_signout.png)
+
+
+5.6 Go back to the Cognito user name in the AWS management console and add a `name` and `preferred name` to your user.
+Refresh the app to check if the defined `name` and `preferred name` gets displayed under the `@handle`
+
+![handle](assets/week3_verify_handle.png)
+
+
+
+
+### Implement Custom Signup Page
+
+1. Update the [frontend-react-js/src/pages/SignupPage.js](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/195e093e5169fbc17f26097f203d574e88481311/frontend-react-js/src/pages/SignupPage.js)
+
+replace 
+```js
+// [TODO] Authenication
+import Cookies from 'js-cookie'
+```
+
+with 
+```js
+// [TODO] Authenication
+import { Auth } from 'aws-amplify';
+```
+
+Replace old code:
+```
+  const onsubmit = async (event) => {
+    event.preventDefault();
+    console.log('SignupPage.onsubmit')
+    // [TODO] Authenication
+    Cookies.set('user.name', name)
+    Cookies.set('user.username', username)
+    Cookies.set('user.email', email)
+    Cookies.set('user.password', password)
+    Cookies.set('user.confirmation_code',1234)
+    window.location.href = `/confirm?email=${email}`
+    return false
+  }
+```
+
+
+with new code
+```js
+const onsubmit = async (event) => {
+    event.preventDefault();
+    setErrors('')
+    console.log('username',username)
+    console.log('email',email)
+    console.log('name',name)
+    try {
+      const { user } = await Auth.signUp({
+        username: email,
+        password: password,
+        attributes: {
+          name: name,
+          email: email,
+          preferred_username: username,
+        },
+        autoSignIn: { // optional - enables auto sign in after user is confirmed
+          enabled: true,
+        }
+      });
+      console.log(user);
+      window.location.href = `/confirm?email=${email}`
+    } catch (error) {
+        console.log(error);
+        setErrors(error.message)
+    }
+    return false
+  }
+ ``` 
+ 
+![sign_up](assets/week3_signed_up.png)
+ 
+ 
+### Implement Custom Confirmation Page
+1. Update the [frontend-react-js/src/pages/ConfirmationPage.js](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/195e093e5169fbc17f26097f203d574e88481311/frontend-react-js/src/pages/ConfirmationPage.js)
+
+replace 
+```js
+// [TODO] Authenication
+import Cookies from 'js-cookie'
+```
+
+with 
+```js
+// [TODO] Authenication
+import { Auth } from 'aws-amplify';
+```
+
+Replace old `resent code` :
+```js
+  const resend_code = async (event) => {
+    console.log('resend_code')
+    // [TODO] Authenication
+  }
+```
+
+
+with new `resend code`
+
+```js
+const resend_code = async (event) => {
+    setErrors('')
+    try {
+      await Auth.resendSignUp(email);
+      console.log('code resent successfully');
+      setCodeSent(true)
+    } catch (err) {
+      // does not return a code
+      // does cognito always return english
+      // for this to be an okay match?
+      console.log(err)
+      if (err.message == 'Username cannot be empty'){
+        setCognitoErrors("You need to provide an email in order to send Resend Activiation Code")   
+      } else if (err.message == "Username/client id combination not found."){
+        setCognitoErrors("Email is invalid or cannot be found.")   
+      }
+    }
+  }
+```  
+
+
+
+Replace old `onsubmit code` :
+```js
+const onsubmit = async (event) => {
+    event.preventDefault();
+    console.log('ConfirmationPage.onsubmit')
+    // [TODO] Authenication
+    if (Cookies.get('user.email') === undefined || Cookies.get('user.email') === '' || Cookies.get('user.email') === null){
+      setErrors("You need to provide an email in order to send Resend Activiation Code")   
+    } else {
+      if (Cookies.get('user.email') === email){
+        if (Cookies.get('user.confirmation_code') === code){
+          Cookies.set('user.logged_in',true)
+          window.location.href = "/"
+        } else {
+          setErrors("Code is not valid")
+        }
+      } else {
+        setErrors("Email is invalid or cannot be found.")   
+      }
+    }
+    return false
+  }
+```
+
+
+with new `onsubmit code`
+
+```js
+const onsubmit = async (event) => {
+    event.preventDefault();
+    setErrors('')
+    try {
+      await Auth.confirmSignUp(email, code);
+      window.location.href = "/"
+    } catch (error) {
+      setErrors(error.message)
+    }
+    return false
+  }
+```  
+
+verify `confirmation ` functionality
+
+![verify_confirmation_code](assets/week3_verify_confirmation_code.png)
+
+verify `resend activation code` functionality
+
+![verify_resend_code](assets/week3_verify_resend_activation_code.png)
+
+
+
+### Implement Custom Recovery Page
+1. Update the [frontend-react-js/src/pages/RecoverPage.js](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/195e093e5169fbc17f26097f203d574e88481311/frontend-react-js/src/pages/RecoverPage.js)
+
+Add import  
+```js
+import { Auth } from 'aws-amplify';
+```
+
+Replace 
+```js
+const onsubmit_send_code = async (event) => {
+    event.preventDefault();
+    console.log('onsubmit_send_code')
+    return false
+  }
+  const onsubmit_confirm_code = async (event) => {
+    event.preventDefault();
+    console.log('onsubmit_confirm_code')
+    return false
+  }
+```
+
+with
+
+```js
+ const onsubmit_send_code = async (event) => {
+    event.preventDefault();
+    setErrors('')
+    Auth.forgotPassword(username)
+    .then((data) => setFormState('confirm_code') )
+    .catch((err) => setErrors(err.message) );
+    return false
+  }
+  const onsubmit_confirm_code = async (event) => {
+    event.preventDefault();
+    setErrors('')
+    if (password == passwordAgain){
+      Auth.forgotPasswordSubmit(username, code, password)
+      .then((data) => setFormState('success'))
+      .catch((err) => setErrors(err.message) );
+    } else {
+      setCognitoErrors('Passwords do not match')
+    }
+    return false
+  }
+```
+ 
+verify `recovery` functionality
+
+![verify_recovery](assets/week3_recovery_page.png) 
+
+**Commit and sync the code to your Github repo. Stop the GitPod workspace**
+  
 
 ====================================================================================
 
