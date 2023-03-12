@@ -12,7 +12,7 @@
 7. Implement Custom Confirmation Page ✅
 8. Implement Custom Recovery Page ✅
 9. Watch about different approaches to verifying JWTs [video](https://www.youtube.com/watch?v=nJjbI4BbasU&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=43) - Pending
-10. Submit Security quiz :x: (not uploaded)
+10. Submit Security quiz :x: 
 11. Submit Spend considerations quiz :x: (not uploaded)
 
 ====================================================================================
@@ -574,6 +574,357 @@ verify `recovery` functionality
 
 **Commit and sync the code to your Github repo. Stop the GitPod workspace**
   
+
+
+### Implement server side authentication
+
+1. Add in the [frontend-react-js/src/pages/HomeFeedPage.js](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/e1ce912d596647fff67412a42d9f4959d124e3fa/frontend-react-js/src/pages/HomeFeedPage.js) a header to pass along the access token
+
+Add the code in the `loaddata`	const
+
+```js
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("access_token")}`
+  }
+``` 
+
+
+2. Update the backend code to use `authentication tokens`
+
+Update [backend-flask/app.py](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/e1ce912d596647fff67412a42d9f4959d124e3fa/backend-flask/app.py)
+
+2.1 Add `authentication token`
+replace `exisitng code` with `new code`
+
+existing code:
+```
+@app.route("/api/activities/home", methods=['GET'])
+##X-Ray recorder
+@xray_recorder.capture('activities_home')
+def data_home():
+  data = HomeActivities.run()
+  return data, 200
+
+```
+
+
+new code
+```py
+@app.route("/api/activities/home", methods=['GET'])
+##X-Ray recorder
+@xray_recorder.capture('activities_home')
+def data_home():
+  access_token = extract_access_token(request.headers)
+  try:
+    claims = cognito_jwt_token.verify(access_token)
+    # authenicatied request
+    app.logger.debug("authenicated")
+    app.logger.debug(claims)
+    app.logger.debug(claims['username'])
+    data = HomeActivities.run(cognito_user_id=claims['username'])
+  except TokenVerifyError as e:
+    # unauthenicatied request
+    app.logger.debug(e)
+    app.logger.debug("unauthenicated")
+    data = HomeActivities.run()
+  return data, 200
+```
+
+2.2 To add the `logger`
+import `sys` to your `app.py`
+__Note: "sys" is being used for by the app.logger. 
+```py
+import sys
+```
+
+
+
+2.3 Update `CORS` in `app.py`
+
+replace `exisitng code` with `new code`
+
+exisitng code:
+```py
+cors = CORS(
+  app, 
+  resources={r"/api/*": {"origins": origins}},
+  expose_headers="location,link",
+  allow_headers="content-type,if-modified-since",
+  methods="OPTIONS,GET,HEAD,POST"
+)
+```
+
+new code:
+
+```py
+cors = CORS(
+  app, 
+  resources={r"/api/*": {"origins": origins}},
+  headers=['Content-Type', 'Authorization'], 
+  expose_headers='Authorization',
+  methods="OPTIONS,GET,HEAD,POST"
+)
+```
+
+
+2.4 Update the [backend-flask/requirements.txt](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/74681c0a7ea8912a197e94e670f72ed2d5ceb608/backend-flask/requirements.txt) file and add the below:
+
+```sh
+Flask-AWSCognito
+```
+
+2.5 Install the `Flask-AWSCognito` requirement.
+At the terminal, execute the following:
+```sh
+cd backend-flask
+pip install -r requirements.txt
+cd ..
+```
+
+![backed_auth](assets/week3_backend_auth.png)
+
+
+2.6 Add the below `env vars` to the `backend-flask` env var section of [docker-compose.yml](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/74681c0a7ea8912a197e94e670f72ed2d5ceb608/docker-compose.yml)
+
+```yml
+AWS_COGNITO_USER_POOL_ID: "eu-central-1_xxxxxxx"
+AWS_COGNITO_USER_POOL_CLIENT_ID: "xxxxxxxxxxxxxxxxxxxx"    
+```
+
+
+2.7 Create a new folder structure under `backend-flask` and name it `lib`
+
+
+2.8 Create a new file [cognito_jwt_token.py](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/74681c0a7ea8912a197e94e670f72ed2d5ceb608/backend-flask/lib/cognito_jwt_token.py) inside `lib` and add the below code to it:
+
+```py
+import time
+import requests
+from jose import jwk, jwt
+from jose.exceptions import JOSEError
+from jose.utils import base64url_decode
+
+class FlaskAWSCognitoError(Exception):
+  pass
+
+class TokenVerifyError(Exception):
+  pass
+
+def extract_access_token(request_headers):
+    access_token = None
+    auth_header = request_headers.get("Authorization")
+    if auth_header and " " in auth_header:
+        _, access_token = auth_header.split()
+    return access_token
+
+class CognitoJwtToken:
+    def __init__(self, user_pool_id, user_pool_client_id, region, request_client=None):
+        self.region = region
+        if not self.region:
+            raise FlaskAWSCognitoError("No AWS region provided")
+        self.user_pool_id = user_pool_id
+        self.user_pool_client_id = user_pool_client_id
+        self.claims = None
+        if not request_client:
+            self.request_client = requests.get
+        else:
+            self.request_client = request_client
+        self._load_jwk_keys()
+
+
+    def _load_jwk_keys(self):
+        keys_url = f"https://cognito-idp.{self.region}.amazonaws.com/{self.user_pool_id}/.well-known/jwks.json"
+        try:
+            response = self.request_client(keys_url)
+            self.jwk_keys = response.json()["keys"]
+        except requests.exceptions.RequestException as e:
+            raise FlaskAWSCognitoError(str(e)) from e
+
+    @staticmethod
+    def _extract_headers(token):
+        try:
+            headers = jwt.get_unverified_headers(token)
+            return headers
+        except JOSEError as e:
+            raise TokenVerifyError(str(e)) from e
+
+    def _find_pkey(self, headers):
+        kid = headers["kid"]
+        # search for the kid in the downloaded public keys
+        key_index = -1
+        for i in range(len(self.jwk_keys)):
+            if kid == self.jwk_keys[i]["kid"]:
+                key_index = i
+                break
+        if key_index == -1:
+            raise TokenVerifyError("Public key not found in jwks.json")
+        return self.jwk_keys[key_index]
+
+    @staticmethod
+    def _verify_signature(token, pkey_data):
+        try:
+            # construct the public key
+            public_key = jwk.construct(pkey_data)
+        except JOSEError as e:
+            raise TokenVerifyError(str(e)) from e
+        # get the last two sections of the token,
+        # message and signature (encoded in base64)
+        message, encoded_signature = str(token).rsplit(".", 1)
+        # decode the signature
+        decoded_signature = base64url_decode(encoded_signature.encode("utf-8"))
+        # verify the signature
+        if not public_key.verify(message.encode("utf8"), decoded_signature):
+            raise TokenVerifyError("Signature verification failed")
+
+    @staticmethod
+    def _extract_claims(token):
+        try:
+            claims = jwt.get_unverified_claims(token)
+            return claims
+        except JOSEError as e:
+            raise TokenVerifyError(str(e)) from e
+
+    @staticmethod
+    def _check_expiration(claims, current_time):
+        if not current_time:
+            current_time = time.time()
+        if current_time > claims["exp"]:
+            raise TokenVerifyError("Token is expired")  # probably another exception
+
+    def _check_audience(self, claims):
+        # and the Audience  (use claims['client_id'] if verifying an access token)
+        audience = claims["aud"] if "aud" in claims else claims["client_id"]
+        if audience != self.user_pool_client_id:
+            raise TokenVerifyError("Token was not issued for this audience")
+
+    def verify(self, token, current_time=None):
+        """ https://github.com/awslabs/aws-support-tools/blob/master/Cognito/decode-verify-jwt/decode-verify-jwt.py """
+        if not token:
+            raise TokenVerifyError("No token provided")
+
+        headers = self._extract_headers(token)
+        pkey_data = self._find_pkey(headers)
+        self._verify_signature(token, pkey_data)
+
+        claims = self._extract_claims(token)
+        self._check_expiration(claims, current_time)
+        self._check_audience(claims)
+
+        self.claims = claims 
+        return claims
+```
+
+
+2.9 Add the below code after `app = Flask(__name__)` in `app.py`
+
+import:
+```py
+from lib.cognito_jwt_token import CognitoJwtToken, extract_access_token, TokenVerifyError
+```
+
+
+```py
+cognito_jwt_token = CognitoJwtToken(
+  user_pool_id=os.getenv("AWS_COGNITO_USER_POOL_ID"), 
+  user_pool_client_id=os.getenv("AWS_COGNITO_USER_POOL_CLIENT_ID"),
+  region=os.getenv("AWS_DEFAULT_REGION")
+)
+```
+
+
+
+2.10 Update [backend-flask/services/home_activities.py](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/e1ce912d596647fff67412a42d9f4959d124e3fa/backend-flask/services/home_activities.py) to display certain data only when authenticated
+
+replace `exisitng code` with `new code`
+
+existing code:
+
+```py
+class HomeActivities:
+  def run():
+  ## diabling cloudwatch logging to save on spend  
+  #def run(logger): 
+    #logger.info("HomeActivities")
+
+```	  
+new code
+```py
+class HomeActivities:
+  def run(cognito_user_id=None):
+  ## diabling cloudwatch logging to save on spend  
+  #def run(logger): 
+    #logger.info("HomeActivities")
+```
+
+
+Add a new crud to `home_activities.py` which is displayed only when our access token is validated (this is a temporary manual validation step, till we add the remaining functionality to our app)
+
+```py
+      if cognito_user_id != None:
+        extra_crud = {
+          'uuid': '248959df-3079-4947-b847-9e0892d1bab4',
+          'handle':  'Lore',
+          'message': 'My dear brother, it the humans that are the problem',
+          'created_at': (now - timedelta(hours=1)).isoformat(),
+          'expires_at': (now + timedelta(hours=12)).isoformat(),
+          'likes': 1042,
+          'replies': []
+        }
+        results.insert(0,extra_crud)
+```
+
+
+
+2.11 Remove the `access token` from local storage when we `sign out`
+[frontend-react-js/src/components/ProfileInfo.js](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/e1ce912d596647fff67412a42d9f4959d124e3fa/frontend-react-js/src/components/ProfileInfo.js)
+
+replace `exisitng code` with `new code`
+
+existing code
+```js
+ const signOut = async () => {
+    try {
+        await Auth.signOut({ global: true });
+        window.location.href = "/"
+    } catch (error) {
+        console.log('error signing out: ', error);
+    }
+  }
+  
+  
+new code
+```js
+ const signOut = async () => {
+    try {
+        await Auth.signOut({ global: true });
+        window.location.href = "/"
+        localStorage.removeItem("access_token")
+    } catch (error) {
+        console.log('error signing out: ', error);
+    }
+  }
+```
+
+
+
+2.12 `compose up` the `docker-compose.yml` 
+
+Check the backend container logs.
+
+![check_log](assets/week3_container_log_token.png)
+
+Access the Frontend UI and login to the app. Check if `Lore's Crud` is displayed. This will only be displayed if our authentication token is successfully validated.
+![backed_auth_working](assets/week3_authenticated.png)
+
+`Sign out` of the app to verify if `Lore's Crud` disappears.
+
+It does! Sweet victory!!
+
+Well done!
+
+![backed_auth_working](assets/week3_logged_out.png)
+
+2.13 Commit and syc the code to your Github bootcamp repo.
 
 ====================================================================================
 
