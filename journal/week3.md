@@ -11,9 +11,11 @@
 6. Implement Custom Signup Page ✅
 7. Implement Custom Confirmation Page ✅
 8. Implement Custom Recovery Page ✅
-9. Watch about different approaches to verifying JWTs [video](https://www.youtube.com/watch?v=nJjbI4BbasU&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=43) - Pending
-10. Submit Security quiz :x: 
-11. Submit Spend considerations quiz :x: (not uploaded)
+9. Implement Json web tokens (JWT) for our backend app ✅
+10. Improve UI contrasts and setup css theme variables ✅
+11. Watch about different approaches to verifying JWTs [video](https://www.youtube.com/watch?v=nJjbI4BbasU&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=43) ✅
+12. Submit Security quiz ✅
+13. Submit Spend considerations quiz :x: (not uploaded)
 
 ====================================================================================
 
@@ -26,23 +28,30 @@
 | 3 	| Implement Custom Signup Page                |  [journal](#implement-custom-signup-page)  |
 | 4 	| Implement Custom Confirmation Page  	|  [journal](#implement-custom-confirmation-page) 	|
 | 5     | Implement Custom Recovery Page |  [journal](#implement-custom-recovery-page) |
-| 6	| Spend Considerations | [journal](#week-3-spend-considerations) |
-| 7	| Security Considerations | [journal](#week-3-security-considerations) |
+| 6	| Implement Json web tokens (JWT) for our backend app | [journal](#implement-json-web-tokens-jwt-for-our-backend-app) |
+| 7	| Improve UI contrasts and setup css theme variables | [journal](#improve-ui-contrasts-and-setup-css-theme-variables) |
+| 8	| Security Considerations | [journal](#week-3-security-considerations) |
 
 
 ====================================================================================
 
 ## Stretch Assignments
-- none so far
+
+- minor code modification to pass email to confirmation page
+![conf_page](assets/week3_pass_email_confirmation_page.png)
+
 ====================================================================================
 
 ## Personal Milestones  👯
+
+Completing this week  is my biggest accomplishment. 
+This week was a real struggle with all the JWT implementaion. Though 2 days late, I managed to catch up!
 
 ====================================================================================
 
 ## Issues faced 😰 :x: :warning: :no_entry:
 
-
+A couple of hiccups while implementing JWT. debugging skills (and my patience) put to test!
 
 ====================================================================================
 
@@ -576,7 +585,7 @@ verify `recovery` functionality
   
 
 
-### Implement server side authentication
+### Implement Json web tokens JWT for our backend app
 
 1. Add in the [frontend-react-js/src/pages/HomeFeedPage.js](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/e1ce912d596647fff67412a42d9f4959d124e3fa/frontend-react-js/src/pages/HomeFeedPage.js) a header to pass along the access token
 
@@ -928,8 +937,148 @@ Well done!
 
 ====================================================================================
 
+### Improve UI contrasts and setup css theme variables
+
+1. Add [frontend-react-js/src/index.css](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/4e116448956ce89cc5fc8872b56be9249c6a32a6/frontend-react-js/src/index.css)
+
+
+- Define `background`, `foreground` and `field border` color variables in a new `root` section of your `index.css`. This will be referenced in all other css of our app, so that we follow the same color scheme throughout.
+```css
+:root {
+  --bg: rgb(61,13,123);
+  --fg: rgb(8,1,14);
+
+  --field-border: rgb(255,255,255,0.29);
+  --field-border-focus: rgb(149,0,255,1);
+  --field-bg: rgb(31,31,31);
+}
+```
+
+- Replace `background` defined in `html,body` with : `background: var(--bg);`
+
+
+2. Update [frontend-react-js/src/components/ActivityItem.css](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/4e116448956ce89cc5fc8872b56be9249c6a32a6/frontend-react-js/src/components/ActivityItem.css)
+Under `.activity_item` replace `border-bottom: solid 1px rgb(31,36,49);` with `border-bottom: solid 1px rgb(61,13,123);`
+
+
+3. Update [frontend-react-js/src/components/DesktopSidebar.css](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/4e116448956ce89cc5fc8872b56be9249c6a32a6/frontend-react-js/src/components/DesktopSidebar.css)
+Under `section footer a` replace `color: rgba(255,255,255,0.2);` with `color: rgba(255,255,255,0.5);`
+
+
+4. Update [frontend-react-js/src/components/JoinSection.css](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/4e116448956ce89cc5fc8872b56be9249c6a32a6/frontend-react-js/src/components/JoinSection.css)
+In `.join` replace `background: #000;` with `background: var(--fg);`
+
+
+5. Update [frontend-react-js/src/App.css](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/4e116448956ce89cc5fc8872b56be9249c6a32a6/frontend-react-js/src/App.css)
+Replace `background: #000;` with `background: var(--fg);`
+
+6. Update [frontend-react-js/src/components/Search.css](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/4e116448956ce89cc5fc8872b56be9249c6a32a6/frontend-react-js/src/components/Search.css)
+replace `border: solid 1px rgba(149,0,255,0.1);` with `border: solid 1px var(--field-border);`
+`border: solid 1px rgb(149,0,255,1);` with `border: solid 1px var(--field-border-focus)`;
+and `background: rgba(149,0,255,0.1);` with `background: var(--field-bg);`
+
+7. Update [frontend-react-js/src/pages/SigninPage.css](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/4e116448956ce89cc5fc8872b56be9249c6a32a6/frontend-react-js/src/pages/SigninPage.css)
+
+Replace
+```
+article.signin-article input[type='text'],
+article.signin-article input[type='password'] {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  border-radius: 4px;
+  border: none;
+  outline: none;
+  display: block;
+  outline: none;
+  resize: none;
+  width: 100%;
+  padding: 16px;
+  border: solid 1px #555555;
+  background: #1f1f1f;
+  color: #fff;
+}
+
+.field.password {
+  margin-top: 16px;
+}
+
+article.signin-article input[type='text']:focus ,
+article.signin-article input[type='password']:focus {
+  border: solid 1px rgb(149,0,255,1);
+}
+```
+
+
+New
+```css
+article.signin-article input[type='text'],
+article.signin-article input[type='password'] {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  border-radius: 4px;
+  border: none;
+  outline: none;
+  display: block;
+  outline: none;
+  resize: none;
+  width: 100%;
+  padding: 16px;
+  border: solid 1px var(--field-border);
+  background: var(--field-bg);
+  color: #fff;
+}
+
+.field.password {
+  margin-top: 16px;
+}
+
+article.signin-article input[type='text']:focus ,
+article.signin-article input[type='password']:focus {
+  border: solid 1px var(--field-border-focus);
+}
+```
+
+8. Update [frontend-react-js/src/pages/SignupPage.css](https://github.com/aggarwal-tanushree/aws-bootcamp-cruddur-2023/blob/4e116448956ce89cc5fc8872b56be9249c6a32a6/frontend-react-js/src/pages/SignupPage.css)
+
+Inside `article.signup-article input[type='password'] {` replace `border: solid 1px #555555;` with ` border: solid 1px var(--field-border);`
+
+Inside `article.signup-article input[type='password']:focus {` replace `border: solid 1px rgb(149,0,255,1);` with ` border: solid 1px var(--field-border-focus);`
+
+9. Commit and sync the changes to yout Github repo
+
+
+![main_page](assets/week3_main_page.png)
+
+Sign-in Page
+![main_page](assets/week3_sign_in_page.png)
+
+Sign-up Page
+![main_page](assets/week3_sign_up_page.png)
+
+====================================================================================
+
 ## Week 3 Security considerations
 [Ashish's Decenteralized Authentication security considerations](https://www.youtube.com/watch?v=tEJIeII66pY&list=PLBfufR7vyJJ7k25byhRXJldB5AiwgNnWv&index=39)
+
+1. OAuth 2.0 - used for `authorization`
+2. OpenID Connect - allows using social credentials for `authentication`. Does not do authorization. OpenID Connect generally works hand-in-hand with OAuth
+
+3. SAML/Single sign on & Identity provider - security assertion markup language, allows a `single point of entry in any app`.
+
+
+**Amazon Cognito **
+- regional service
+- User directory for consumer customers
+- two types:
+
+1. Cognito user pool - authorization via idp tokens etc. Estalblish trust relationship with social media site etc.
+
+2. Cognito identity pool - authorization via AWS IAM credentials. Acts as an access broker. Grants services temporary credentials to access AWS resources.
+
+![cognito](assets/week3_security_cognito.png)
+
+![tokens](assets/week3_token_lifecycle.png)
+
 
 ====================================================================================
 
